@@ -11,30 +11,22 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #030303; color: #f4f4f5; height: 100dvh; max-height: 100dvh; overflow: hidden; display: flex; flex-direction: column; user-select: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Киберпанк стили */
         .gp-header { height: 56px; border-bottom: 1px solid rgba(153, 27, 27, 0.4); background: rgba(7, 7, 7, 0.9); backdrop-filter: blur(12px); padding: 0 16px; display: flex; align-items: center; justify-content: space-between; z-index: 30; flex-shrink: 0; }
         .gp-nav { height: 60px; background: #050505; border-top: 1px solid rgba(153, 27, 27, 0.4); padding: 0 16px; display: flex; align-items: center; justify-content: space-around; z-index: 30; flex-shrink: 0; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; cursor: pointer; color: #71717a; }
         .nav-btn.active { color: #ef4444; }
         .view-content { position: absolute; inset: 0; bottom: 60px; display: flex; flex-direction: column; background: #030303; }
         .hidden-view { display: none !important; }
-        
         .gp-card { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(153, 27, 27, 0.5); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
         .gp-button { background: #dc2626; color: white; font-weight: bold; border: none; border-radius: 12px; padding: 10px 16px; cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        .gp-button:hover { background: #b91c1c; }
         .gp-input { width: 100%; background: #000000; border: 1px solid rgba(153, 27, 27, 0.6); border-radius: 12px; padding: 12px 16px; color: #f4f4f5; outline: none; font-size: 14px; }
-        .gp-input:focus { border-color: #ef4444; }
-        
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; padding: 24px; text-align: center; }
     </style>
 </head>
 <body>
-
-    <!-- Верхний бар -->
     <header class="gp-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="width: 32px; height: 32px; border-radius: 12px; background: black; border: 1px solid #dc2626; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(220,38,38,0.4);">
+            <div style="width: 32px; height: 32px; border-radius: 12px; background: black; border: 1px solid #dc2626; display: flex; align-items: center; justify-content: center;">
                 <svg style="width: 20px; height: 20px;" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="100" cy="100" r="75" fill="black" stroke="#DC2626" stroke-width="6"/>
                     <path d="M98 72H78C71.4 72 66 77.4 66 84V116C66 122.6 71.4 128 78 128H98V108H86" stroke="#EF4444" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -44,672 +36,104 @@
             <span style="font-weight: bold; letter-spacing: 2px; color: #ef4444; font-size: 11px; font-family: monospace;">GHOST PROTOCOL</span>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <span id="p2p-status-badge" style="font-size: 10px; font-family: monospace; color: #f59e0b; background: rgba(120, 53, 15, 0.3); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(180, 83, 9, 0.5);">P2P: ПОДКЛЮЧЕНИЕ...</span>
-            <div id="p2p-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 8px #f59e0b;"></div>
+            <span id="p2p-status-badge" style="font-size: 10px; font-family: monospace; color: #f59e0b; background: rgba(120, 53, 15, 0.3); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(180, 83, 9, 0.5);">P2P: ONLINE</span>
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #34d399;"></div>
         </div>
     </header>
 
-    <!-- Основной контент (Вкладки) -->
     <main style="flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column;">
-        
-        <!-- ВКЛАДКА 1: ЧАТЫ И ИСТОРИИ -->
-        <div id="view-chats" class="view-content" style="display: flex;">
-            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(153, 27, 27, 0.3); background: rgba(5, 5, 5, 0.5); flex-shrink: 0;">
-                <div style="display: flex; gap: 12px; overflow-x: auto; align-items: center;" class="no-scrollbar">
-                    <div onclick="openStoryModal()" style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer;">
-                        <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(to top right, #dc2626, #27272a); display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 100%; height: 100%; background: black; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <i data-lucide="plus" style="width: 20px; height: 20px; color: #ef4444;"></i>
-                            </div>
-                        </div>
-                        <span style="font-size: 10px; color: #a1a1aa; font-family: monospace;">Ваша история</span>
-                    </div>
-                    <div id="stories-strip" style="display: flex; gap: 12px; flex-shrink: 0;">
-                        <div onclick="openChat('ChatGPT Astra (Free Unlimited)', true, 'astra')" style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer;">
-                            <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(to top right, #2563eb, #34d399); display: flex; align-items: center; justify-content: center;">
-                                <div style="width: 100%; height: 100%; background: #18181b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #60a5fa;">✨</div>
-                            </div>
-                            <span style="font-size: 10px; color: #60a5fa; font-family: monospace;">Astra Free</span>
-                        </div>
-                        <div onclick="openChat('DeepSeek AI', true, 'deepseek')" style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer;">
-                            <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(to top right, #0891b2, #dc2626); display: flex; align-items: center; justify-content: center;">
-                                <div style="width: 100%; height: 100%; background: #18181b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #22d3ee;">AI</div>
-                            </div>
-                            <span style="font-size: 10px; color: #22d3ee; font-family: monospace;">DeepSeek</span>
-                        </div>
-                    </div>
+        <!-- Чаты -->
+        <div id="view-chats" class="view-content" style="display: flex; padding: 16px; overflow-y: auto;">
+            <div onclick="openChat('ChatGPT Astra', true, 'astra')" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">ChatGPT Astra</div>
+                    <div style="font-size: 12px; color: #a1a1aa;">Безлимитный ИИ-ассистент</div>
                 </div>
-            </div>
-
-            <div style="padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #27272a; background: rgba(0,0,0,0.4); flex-shrink: 0;">
-                <span style="font-size: 11px; font-family: monospace; color: #a1a1aa; text-transform: uppercase; letter-spacing: 1px;">Активные каналы</span>
-                <button onclick="openCreateChannelModal()" style="padding: 6px 12px; border-radius: 8px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); color: #ef4444; font-size: 11px; font-family: monospace; display: flex; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0;">
-                    <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> Новый канал
-                </button>
-            </div>
-
-            <div style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;" id="chats-list">
-                <div onclick="openChat('ChatGPT Astra (Free)', true, 'astra')" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-color: rgba(30, 58, 138, 0.5); background: rgba(30, 58, 138, 0.15);">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(30, 58, 138, 0.4); border: 1px solid rgba(37, 99, 235, 0.5); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #60a5fa;">✨</div>
-                        <div>
-                            <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace; display: flex; align-items: center; gap: 8px;">
-                                ChatGPT Astra <span style="font-size: 9px; background: rgba(6, 95, 70, 0.4); color: #6ee7b7; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(4, 120, 87, 0.5);">FREE</span>
-                            </div>
-                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">Безлимитный ИИ-ассистент</div>
-                        </div>
-                    </div>
-                    <span style="font-size: 10px; color: #34d399; font-family: monospace;">UNLIMITED</span>
-                </div>
-
-                <div onclick="openChat('DeepSeek AI', true, 'deepseek')" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-color: rgba(8, 145, 178, 0.5); background: rgba(8, 145, 178, 0.15);">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(8, 145, 178, 0.3); border: 1px solid rgba(6, 182, 212, 0.5); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #22d3ee; font-family: monospace; font-weight: bold;">AI</div>
-                        <div>
-                            <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace; display: flex; align-items: center; gap: 8px;">
-                                DeepSeek AI <span style="font-size: 9px; background: rgba(8, 145, 178, 0.3); color: #22d3ee; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(6, 182, 212, 0.5);">Neural</span>
-                            </div>
-                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">Аналитический ИИ-ассистент</div>
-                        </div>
-                    </div>
-                    <span style="font-size: 10px; color: #22d3ee; font-family: monospace;">ONLINE</span>
-                </div>
+                <span style="font-size: 10px; color: #34d399; font-family: monospace;">FREE</span>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: ДРУЗЬЯ (СЕТЬ P2P) -->
+        <!-- Друзья -->
         <div id="view-friends" class="view-content hidden-view" style="padding: 16px; overflow-y: auto; gap: 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <h2 style="font-size: 13px; font-weight: bold; color: #ef4444; font-family: monospace; text-transform: uppercase; letter-spacing: 1px;">Контакты & P2P Сеть</h2>
-                <button onclick="openAddFriendModal()" class="gp-button" style="display: flex; align-items: center; gap: 6px;">
-                    <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i> Подключиться к другу
-                </button>
-            </div>
-
-            <!-- Ваш ID для подключения друга -->
-            <div class="gp-card" style="background: linear-gradient(to right, rgba(127, 29, 29, 0.3), #000);">
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="font-size: 10px; color: #a1a1aa; font-family: monospace; text-transform: uppercase;">Ваш сетевой код (скажите другу):</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; background: #000; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(153, 27, 27, 0.6);">
-                        <span id="my-peer-id" style="font-weight: bold; font-size: 13px; color: #f87171; font-family: monospace;">Генерация ID...</span>
-                        <button onclick="copyMyId()" style="background: none; border: none; color: #34d399; font-size: 11px; font-family: monospace; cursor: pointer; display: flex; align-items: center; gap: 4px;"><i data-lucide="copy" style="width: 14px; height: 14px;"></i> Копировать</button>
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-                        <div>
-                            <div style="font-size: 10px; color: #71717a; font-family: monospace;">ПОЗЫВНОЙ:</div>
-                            <div id="my-callsign-display" style="font-weight: bold; font-size: 13px; color: #f4f4f5; font-family: monospace;">Ghost_Operator_01</div>
-                        </div>
-                        <button onclick="openEditCallsignModal()" style="padding: 6px 12px; border-radius: 8px; background: #000; border: 1px solid rgba(153, 27, 27, 0.8); color: #f87171; font-size: 11px; font-family: monospace; cursor: pointer;">
-                            Изменить
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div style="font-size: 11px; font-family: monospace; color: #a1a1aa; text-transform: uppercase; margin-top: 4px;">Активные P2P Контакты:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px;" id="friends-list-container">
-                <!-- Сюда добавляются подключенные друзья -->
+            <h2 style="font-size: 13px; font-weight: bold; color: #ef4444; font-family: monospace;">Контакты & P2P Сеть</h2>
+            <div class="gp-card">
+                <div style="font-size: 10px; color: #a1a1aa; font-family: monospace;">Ваш сетевой код:</div>
+                <div id="my-peer-id" style="font-weight: bold; font-size: 13px; color: #f87171; font-family: monospace; margin: 8px 0;">Загрузка...</div>
+                <button onclick="copyMyId()" class="gp-button" style="width: 100%;">Копировать код</button>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: БУНКЕР -->
+        <!-- Бункер -->
         <div id="view-secure" class="view-content hidden-view" style="padding: 24px; align-items: center; justify-content: center; text-align: center; gap: 24px;">
-            <div style="width: 80px; height: 80px; border-radius: 24px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #ef4444; box-shadow: 0 0 30px rgba(220,38,38,0.4);">
-                <i data-lucide="flame" style="width: 40px; height: 40px;"></i>
-            </div>
-            <div>
-                <h2 style="font-size: 18px; font-weight: bold; color: #f4f4f5; font-family: monospace; text-transform: uppercase; margin-bottom: 8px;">Бункер Самоуничтожения</h2>
-                <p style="font-size: 12px; color: #a1a1aa; max-width: 280px; line-height: 1.5;">Полное стирание всех кэш-файлов, истории переписок и крипто-ключей из памяти устройства.</p>
-            </div>
-            <button onclick="nukeData()" class="gp-button" style="width: 100%; max-width: 280px; padding: 14px; box-shadow: 0 0 20px rgba(220,38,38,0.5);">
-                УНИЧТОЖИТЬ ВСЕ ДАННЫЕ
-            </button>
+            <h2 style="font-size: 18px; font-weight: bold; color: #f4f4f5; font-family: monospace;">БУНКЕР</h2>
+            <button onclick="nukeData()" class="gp-button" style="width: 100%;">Очистить данные</button>
         </div>
 
-        <!-- ВКЛАДКА 4: НАСТРОЙКИ -->
-        <div id="view-settings" class="view-content hidden-view" style="padding: 16px; overflow-y: auto; gap: 16px;">
-            <h2 style="font-size: 13px; font-weight: bold; color: #ef4444; font-family: monospace; text-transform: uppercase; padding: 0 4px;">Настройки протокола</h2>
-            
-            <div class="gp-card" style="display: flex; flex-direction: column; gap: 12px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-size: 12px; color: #d4d4d8; font-family: monospace;">Ваш крипто-позывной</span>
-                    <span id="settings-callsign-text" style="font-size: 12px; color: #f87171; font-family: monospace; font-weight: bold;">Ghost_Operator_01</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-size: 12px; color: #d4d4d8; font-family: monospace;">Отпечаток ключа (Fingerprint)</span>
-                    <span style="font-size: 12px; color: #34d399; font-family: monospace;">🩸 🗡️ 🔥 🕷️</span>
-                </div>
-                <button onclick="openEditCallsignModal()" style="width: 100%; padding: 10px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); color: #f87171; font-family: monospace; font-size: 12px; border-radius: 10px; cursor: pointer;">
-                    Изменить позывной
-                </button>
-            </div>
-
-            <div class="gp-card" style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-weight: bold; font-size: 13px; color: #f4f4f5; font-family: monospace;">Статус сети</div>
-                <div style="font-size: 11px; color: #a1a1aa; line-height: 1.5;">
-                    P2P узел активен. Прямое соединение без серверов-посредников.
-                </div>
-            </div>
+        <!-- Настройки -->
+        <div id="view-settings" class="view-content hidden-view" style="padding: 16px;">
+            <h2 style="font-size: 13px; font-weight: bold; color: #ef4444; font-family: monospace;">НАСТРОЙКИ</h2>
         </div>
 
-        <!-- ВКЛАДКА: АКТИВНЫЙ ЧАТ -->
+        <!-- Чат -->
         <div id="view-active-chat" class="view-content hidden-view" style="z-index: 20;">
-            <div class="gp-header" style="background: #070707;">
-                <div style="display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden;">
-                    <button onclick="closeChat()" style="background: none; border: none; color: #a1a1aa; cursor: pointer; flex-shrink: 0;"><i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i></button>
-                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        <div id="active-chat-title" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">Чат</div>
-                        <div id="active-chat-status" style="font-size: 10px; color: #34d399; font-family: monospace;">E2EE Защищено</div>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                    <button onclick="triggerAttachFile()" title="Прикрепить файл" style="background: none; border: none; color: #a1a1aa; cursor: pointer; padding: 6px;"><i data-lucide="paperclip" style="width: 18px; height: 18px;"></i></button>
-                    <button onclick="startVoiceCall()" title="Аудиозвонок" style="background: none; border: none; color: #34d399; cursor: pointer; padding: 6px;"><i data-lucide="phone" style="width: 18px; height: 18px;"></i></button>
-                    <button onclick="startVideoCall()" title="Видеозвонок" style="background: none; border: none; color: #60a5fa; cursor: pointer; padding: 6px;"><i data-lucide="video" style="width: 18px; height: 18px;"></i></button>
-                </div>
+            <div class="gp-header">
+                <button onclick="closeChat()" style="background: none; border: none; color: #a1a1aa; cursor: pointer;"><i data-lucide="arrow-left"></i></button>
+                <span id="active-chat-title" style="font-weight: bold; font-family: monospace; color: #fff;">Чат</span>
+                <div></div>
             </div>
-
-            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-                <div class="gp-card" style="max-width: 85%; margin-bottom: 0;">
-                    <p style="font-size: 13px; color: #e4e4e7;">Квантовый туннель активен. Все системы ИИ и P2P готовы к работе.</p>
-                    <span style="font-size: 9px; color: #71717a; font-family: monospace; margin-top: 4px; display: block;">12:40</span>
-                </div>
-            </div>
-
-            <div style="padding: 12px; background: #050505; border-top: 1px solid rgba(153, 27, 27, 0.5); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; gap: 8px; align-items: center;" class="no-scrollbar">
-                    <button onclick="sendEmoji('🔥')" style="padding: 6px 10px; border-radius: 8px; background: #000; border: 1px solid rgba(153, 27, 27, 0.5); font-size: 14px; cursor: pointer;">🔥</button>
-                    <button onclick="sendEmoji('💀')" style="padding: 6px 10px; border-radius: 8px; background: #000; border: 1px solid rgba(153, 27, 27, 0.5); font-size: 14px; cursor: pointer;">💀</button>
-                    <button onclick="sendEmoji('⚡')" style="padding: 6px 10px; border-radius: 8px; background: #000; border: 1px solid rgba(153, 27, 27, 0.5); font-size: 14px; cursor: pointer;">⚡</button>
-                    <button onclick="sendEmoji('🛡️')" style="padding: 6px 10px; border-radius: 8px; background: #000; border: 1px solid rgba(153, 27, 27, 0.5); font-size: 14px; cursor: pointer;">🛡️</button>
-                    <div style="margin-left: auto;">
-                        <button onclick="recordVideoNote()" title="Записать видео-кружок" style="padding: 6px 10px; border-radius: 8px; background: rgba(127, 29, 29, 0.4); border: 1px solid #dc2626; color: #f87171; font-size: 11px; font-family: monospace; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="disc" style="width: 14px; height: 14px;"></i> Кружок</button>
-                    </div>
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение..." class="gp-input" style="font-family: monospace;" onkeypress="if(event.key === 'Enter') handleSendMessageButton()">
-                    <button onclick="handleSendMessageButton()" class="gp-button" style="padding: 12px 16px;"><i data-lucide="send" style="width: 18px; height: 18px;"></i></button>
-                </div>
+            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;"></div>
+            <div style="padding: 12px; background: #050505; display: flex; gap: 8px;">
+                <input type="text" id="chat-input" placeholder="Сообщение..." class="gp-input" onkeypress="if(event.key === 'Enter') handleSendMessageButton()">
+                <button onclick="handleSendMessageButton()" class="gp-button">Отправить</button>
             </div>
         </div>
     </main>
 
-    <!-- Модалка звонка / видеосвязи -->
-    <div id="call-modal" class="modal-overlay hidden-view">
-        <div style="width: 100%; max-width: 340px; background: #0a0a0a; border: 1px solid #dc2626; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
-            <div id="call-icon-container" style="width: 64px; height: 64px; margin: 0 auto; border-radius: 20px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #34d399;">
-                <i data-lucide="phone-call" style="width: 32px; height: 32px;"></i>
-            </div>
-            <h3 id="call-modal-title" style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный аудиовызов</h3>
-            <p id="call-modal-status" style="font-size: 12px; color: #a1a1aa; font-family: monospace;">Ожидание ответа абонента...</p>
-            <div id="video-container" style="display:none; width:100%; height:180px; background:black; border-radius:12px; overflow:hidden; position:relative;">
-                <video id="remote-video" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-            </div>
-            <button onclick="endActiveCall()" class="gp-button" style="background: #dc2626; width: 100%;">Завершить вызов</button>
-        </div>
-    </div>
-
-    <!-- Скрытый инпут для файлов -->
-    <input type="file" id="hidden-file-input" style="display:none;" onchange="handleFileSelected(event)">
-
-    <!-- Нижняя навигация -->
     <nav class="gp-nav">
-        <button onclick="switchTab('chats')" id="nav-chats" class="nav-btn active">
-            <i data-lucide="message-square" style="width: 20px; height: 20px;"></i>
-            <span style="font-size: 10px; font-family: monospace;">Чаты</span>
-        </button>
-        <button onclick="switchTab('friends')" id="nav-friends" class="nav-btn">
-            <i data-lucide="users" style="width: 20px; height: 20px;"></i>
-            <span style="font-size: 10px; font-family: monospace;">Друзья</span>
-        </button>
-        <button onclick="switchTab('secure')" id="nav-secure" class="nav-btn">
-            <i data-lucide="flame" style="width: 20px; height: 20px;"></i>
-            <span style="font-size: 10px; font-family: monospace;">Бункер</span>
-        </button>
-        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn">
-            <i data-lucide="settings" style="width: 20px; height: 20px;"></i>
-            <span style="font-size: 10px; font-family: monospace;">Настройки</span>
-        </button>
+        <button onclick="switchTab('chats')" id="nav-chats" class="nav-btn active"><i data-lucide="message-square"></i><span style="font-size: 10px;">Чаты</span></button>
+        <button onclick="switchTab('friends')" id="nav-friends" class="nav-btn"><i data-lucide="users"></i><span style="font-size: 10px;">Друзья</span></button>
+        <button onclick="switchTab('secure')" id="nav-secure" class="nav-btn"><i data-lucide="flame"></i><span style="font-size: 10px;">Бункер</span></button>
+        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn"><i data-lucide="settings"></i><span style="font-size: 10px;">Настройки</span></button>
     </nav>
-
-    <!-- Модалка изменения позывного -->
-    <div id="edit-callsign-modal" class="modal-overlay hidden-view">
-        <div style="width: 100%; max-width: 320px; background: #0a0a0a; border: 1px solid #dc2626; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
-            <div style="width: 56px; height: 56px; margin: 0 auto; border-radius: 16px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #ef4444;"><i data-lucide="user" style="width: 28px; height: 28px;"></i></div>
-            <h3 style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Изменить позывной</h3>
-            <input type="text" id="new-callsign-input" placeholder="Новый позывной..." class="gp-input" style="text-align: center;">
-            <div style="display: flex; gap: 12px;">
-                <button onclick="saveNewCallsign()" class="gp-button" style="flex: 1;">Сохранить</button>
-                <button onclick="closeEditCallsignModal()" style="flex: 1; padding: 10px 16px; border-radius: 12px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-weight: bold; font-size: 12px; font-family: monospace; cursor: pointer;">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка добавления друга (P2P подключение) -->
-    <div id="add-friend-modal" class="modal-overlay hidden-view">
-        <div style="width: 100%; max-width: 320px; background: #0a0a0a; border: 1px solid #dc2626; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
-            <h3 style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Подключиться к другу</h3>
-            <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">Введите сетевой код (Peer ID) вашего друга:</p>
-            <input type="text" id="friend-peer-id-input" placeholder="Вставьте код друга..." class="gp-input" style="text-align: center; font-size: 12px;">
-            <div style="display: flex; gap: 12px;">
-                <button onclick="connectToFriendSubmit()" class="gp-button" style="flex: 1;">Соединить</button>
-                <button onclick="closeAddFriendModal()" style="flex: 1; padding: 10px 16px; border-radius: 12px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-weight: bold; font-size: 12px; font-family: monospace; cursor: pointer;">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка создания канала -->
-    <div id="create-channel-modal" class="modal-overlay hidden-view">
-        <div style="width: 100%; max-width: 320px; background: #0a0a0a; border: 1px solid #dc2626; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
-            <div style="width: 56px; height: 56px; margin: 0 auto; border-radius: 16px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #ef4444;"><i data-lucide="radio" style="width: 28px; height: 28px;"></i></div>
-            <h3 style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Создать канал</h3>
-            <input type="text" id="new-channel-name" placeholder="Название канала..." class="gp-input" style="text-align: center;">
-            <div style="display: flex; gap: 12px;">
-                <button onclick="createChannelSubmit()" class="gp-button" style="flex: 1;">Создать</button>
-                <button onclick="closeCreateChannelModal()" style="flex: 1; padding: 10px 16px; border-radius: 12px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-weight: bold; font-size: 12px; font-family: monospace; cursor: pointer;">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка публикации истории -->
-    <div id="story-modal" class="modal-overlay hidden-view">
-        <div style="width: 100%; max-width: 320px; background: #0a0a0a; border: 1px solid #dc2626; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
-            <div style="width: 56px; height: 56px; margin: 0 auto; border-radius: 16px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #ef4444;"><i data-lucide="camera" style="width: 28px; height: 28px;"></i></div>
-            <h3 style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Опубликовать историю</h3>
-            <input type="text" id="story-text-input" placeholder="Текст истории / статус..." class="gp-input" style="text-align: center;">
-            <div style="display: flex; gap: 12px;">
-                <button onclick="publishStorySubmit()" class="gp-button" style="flex: 1;">Опубликовать</button>
-                <button onclick="closeStoryModal()" style="flex: 1; padding: 10px 16px; border-radius: 12px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-weight: bold; font-size: 12px; font-family: monospace; cursor: pointer;">Отмена</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         lucide.createIcons();
-        let isAiChat = false;
-        let aiType = null;
-        let myCallsign = localStorage.getItem('my_callsign') || 'Ghost_Operator_01';
-
-        let peer = null;
-        let activeConnection = null;
-        let activeCall = null;
-        let connectedPeerId = null;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateCallsignDisplay();
-            initPeerJS();
-        });
-
-        function initPeerJS() {
-            const customId = 'ghost-' + myCallsign.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + Math.floor(1000 + Math.random() * 9000);
-            peer = new Peer(customId);
-
-            peer.on('open', (id) => {
-                document.getElementById('my-peer-id').innerText = id;
-                document.getElementById('p2p-status-badge').innerText = 'P2P: ONLINE';
-                document.getElementById('p2p-status-badge').style.color = '#34d399';
-                document.getElementById('p2p-status-badge').style.background = 'rgba(6, 95, 70, 0.3)';
-                document.getElementById('p2p-status-badge').style.borderColor = 'rgba(4, 120, 87, 0.5)';
-                document.getElementById('p2p-status-dot').style.background = '#34d399';
-                document.getElementById('p2p-status-dot').style.boxShadow = '0 0 8px #34d399';
-            });
-
-            peer.on('connection', (conn) => {
-                activeConnection = conn;
-                connectedPeerId = conn.peer;
-                setupConnectionHandlers();
-                addFriendToList(conn.peer, 'В сети (P2P)');
-            });
-
-            peer.on('call', (call) => {
-                activeCall = call;
-                document.getElementById('call-modal-title').innerText = "Входящий защищенный вызов";
-                document.getElementById('call-modal-status').innerText = `Звонок от: ${call.peer}`;
-                document.getElementById('call-modal').classList.remove('hidden-view');
-                
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-                    call.answer(stream);
-                    call.on('stream', (remoteStream) => {
-                        const videoEl = document.getElementById('remote-video');
-                        videoEl.srcObject = remoteStream;
-                        document.getElementById('video-container').style.display = 'block';
-                    });
-                }).catch(err => console.log("Media error:", err));
-            });
-
-            peer.on('error', (err) => {
-                console.error(err);
-                document.getElementById('p2p-status-badge').innerText = 'P2P: ОШИБКА';
-            });
-        }
-
-        function copyMyId() {
-            const idText = document.getElementById('my-peer-id').innerText;
-            navigator.clipboard.writeText(idText);
-            alert("Ваш сетевой код скопирован! Передайте его другу.");
-        }
-
-        function updateCallsignDisplay() {
-            const disp = document.getElementById('my-callsign-display');
-            const sett = document.getElementById('settings-callsign-text');
-            if (disp) disp.innerText = myCallsign;
-            if (sett) sett.innerText = myCallsign;
-        }
-
-        function openEditCallsignModal() {
-            const inp = document.getElementById('new-callsign-input');
-            if (inp) inp.value = myCallsign;
-            document.getElementById('edit-callsign-modal').classList.remove('hidden-view');
-        }
-
-        function closeEditCallsignModal() {
-            document.getElementById('edit-callsign-modal').classList.add('hidden-view');
-        }
-
-        function saveNewCallsign() {
-            const inp = document.getElementById('new-callsign-input');
-            const newName = inp ? inp.value.trim() : '';
-            if (newName) {
-                myCallsign = newName;
-                localStorage.setItem('my_callsign', myCallsign);
-                updateCallsignDisplay();
-            }
-            closeEditCallsignModal();
-        }
+        let peer = new Peer('ghost-' + Math.floor(1000 + Math.random() * 9000));
+        peer.on('open', (id) => { document.getElementById('my-peer-id').innerText = id; });
 
         function switchTab(tab) {
             document.querySelectorAll('.view-content').forEach(el => el.classList.add('hidden-view'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-            if (tab === 'chats') {
-                document.getElementById('view-chats').classList.remove('hidden-view');
-                document.getElementById('nav-chats').classList.add('active');
-            } else if (tab === 'friends') {
-                document.getElementById('view-friends').classList.remove('hidden-view');
-                document.getElementById('nav-friends').classList.add('active');
-            } else if (tab === 'secure') {
-                document.getElementById('view-secure').classList.remove('hidden-view');
-                document.getElementById('nav-secure').classList.add('active');
-            } else if (tab === 'settings') {
-                document.getElementById('view-settings').classList.remove('hidden-view');
-                document.getElementById('nav-settings').classList.add('active');
-            }
+            document.getElementById('view-' + tab).classList.remove('hidden-view');
+            document.getElementById('nav-' + tab).classList.add('active');
             lucide.createIcons();
-        }
-
-        function openAddFriendModal() { document.getElementById('add-friend-modal').classList.remove('hidden-view'); }
-        function closeAddFriendModal() { document.getElementById('add-friend-modal').classList.add('hidden-view'); }
-
-        function connectToFriendSubmit() {
-            const friendId = document.getElementById('friend-peer-id-input').value.trim();
-            if (!friendId) return;
-
-            activeConnection = peer.connect(friendId);
-            connectedPeerId = friendId;
-            setupConnectionHandlers();
-            addFriendToList(friendId, 'Подключено');
-            closeAddFriendModal();
-            openChat(friendId, false, null);
-        }
-
-        function setupConnectionHandlers() {
-            if (!activeConnection) return;
-            activeConnection.on('open', () => {
-                alert("Успешное P2P соединение с другом установлено!");
-            });
-            activeConnection.on('data', (data) => {
-                const container = document.getElementById('chat-messages');
-                container.innerHTML += `
-                    <div style="display: flex; justify-content: flex-start;">
-                        <div style="padding: 14px; border-radius: 16px; background: #18181b; border: 1px solid #27272a; color: #f4f4f5; max-width: 85%;">
-                            <p style="font-size: 13px;">${data}</p>
-                        </div>
-                    </div>
-                `;
-                container.scrollTop = container.scrollHeight;
-            });
-        }
-
-        function addFriendToList(peerId, statusText) {
-            const container = document.getElementById('friends-list-container');
-            container.innerHTML += `
-                <div class="gp-card" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; color: #ef4444; font-family: monospace; font-weight: bold; font-size: 12px;">P2P</div>
-                        <div style="overflow: hidden; max-width: 180px;">
-                            <div style="font-weight: bold; font-size: 13px; color: #f4f4f5; font-family: monospace; text-overflow: ellipsis; overflow: hidden;">${peerId}</div>
-                            <div style="font-size: 10px; color: #34d399; font-family: monospace;">${statusText}</div>
-                        </div>
-                    </div>
-                    <button onclick="openChat('${peerId}', false, null)" style="padding: 10px; border-radius: 10px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); color: #ef4444; cursor: pointer;"><i data-lucide="message-square" style="width: 16px; height: 16px;"></i></button>
-                </div>
-            `;
-            lucide.createIcons();
-        }
-
-        function openCreateChannelModal() { document.getElementById('create-channel-modal').classList.remove('hidden-view'); }
-        function closeCreateChannelModal() { document.getElementById('create-channel-modal').classList.add('hidden-view'); }
-        function createChannelSubmit() {
-            const name = document.getElementById('new-channel-name').value.trim();
-            if (!name) return;
-            const chatsList = document.getElementById('chats-list');
-            chatsList.innerHTML += `
-                <div onclick="openChat('${name}', false, null)" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(153, 27, 27, 0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; color: #ef4444; font-family: monospace; font-weight: bold;">${name.slice(0,2).toUpperCase()}</div>
-                        <div>
-                            <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${name}</div>
-                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">Защищенный публичный канал</div>
-                        </div>
-                    </div>
-                    <span style="font-size: 10px; color: #34d399; font-family: monospace;">CHANNEL</span>
-                </div>
-            `;
-            lucide.createIcons();
-            document.getElementById('new-channel-name').value = '';
-            closeCreateChannelModal();
-        }
-
-        function openStoryModal() { document.getElementById('story-modal').classList.remove('hidden-view'); }
-        function closeStoryModal() { document.getElementById('story-modal').classList.add('hidden-view'); }
-        function publishStorySubmit() {
-            const text = document.getElementById('story-text-input').value.trim();
-            if (!text) return;
-            const strip = document.getElementById('stories-strip');
-            strip.innerHTML += `
-                <div onclick="alert('История: ${text}')" style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; cursor: pointer;">
-                    <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(to top right, #ef4444, #f59e0b); display: flex; align-items: center; justify-content: center;">
-                        <div style="width: 100%; height: 100%; background: #18181b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #ef4444;">ME</div>
-                    </div>
-                    <span style="font-size: 10px; color: #f87171; font-family: monospace;">Моя история</span>
-                </div>
-            `;
-            document.getElementById('story-text-input').value = '';
-            closeStoryModal();
-        }
-
-        function recordVideoNote() {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML += `
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="padding: 12px; border-radius: 20px; background: rgba(127, 29, 29, 0.3); border: 1px solid #dc2626; display: flex; align-items: center; gap: 12px; max-width: 85%;">
-                        <div style="width: 48px; height: 48px; border-radius: 50%; background: black; border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; color: #ef4444;">
-                            <i data-lucide="play" style="width: 20px; height: 20px;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size: 12px; font-weight: bold; color: #f4f4f5; font-family: monospace;">Видео-кружок (0:04)</div>
-                            <div style="font-size: 10px; color: #34d399; font-family: monospace;">Зашифровано E2EE</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            lucide.createIcons();
-            container.scrollTop = container.scrollHeight;
         }
 
         function openChat(title, isAi, type) {
-            isAiChat = isAi;
-            aiType = type;
             document.getElementById('active-chat-title').innerText = title;
-            document.getElementById('active-chat-status').innerText = isAi ? (type === 'deepseek' ? 'DeepSeek Neural • Online' : 'Astra Free • Unlimited') : 'P2P Шифрованное соединение';
             document.getElementById('view-active-chat').classList.remove('hidden-view');
         }
-        function closeChat() {
-            document.getElementById('view-active-chat').classList.add('hidden-view');
+
+        function closeChat() { document.getElementById('view-active-chat').classList.add('hidden-view'); }
+
+        function copyMyId() {
+            navigator.clipboard.writeText(document.getElementById('my-peer-id').innerText);
+            alert("Код скопирован");
         }
 
-        function sendEmoji(emoji) {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML += `
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="padding: 12px; border-radius: 16px; background: rgba(127, 29, 29, 0.3); border: 1px solid #dc2626; font-size: 24px;">${emoji}</div>
-                </div>
-            `;
-            container.scrollTop = container.scrollHeight;
-            if (activeConnection && activeConnection.open) {
-                activeConnection.send(emoji);
-            }
-        }
-
-        function triggerAttachFile() {
-            document.getElementById('hidden-file-input').click();
-        }
-
-        function handleFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const container = document.getElementById('chat-messages');
-            container.innerHTML += `
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="padding: 12px; border-radius: 16px; background: #27272a; border: 1px solid #3f3f46; max-width: 85%;">
-                        <div style="font-size: 11px; font-family: monospace; color: #a1a1aa; margin-bottom: 4px;">📎 Прикрепленный файл:</div>
-                        <div style="font-size: 13px; font-weight: bold; color: #f4f4f5;">${file.name}</div>
-                        <div style="font-size: 10px; color: #34d399; margin-top: 2px;">Зашифровано AES-256 (Отправлено)</div>
-                    </div>
-                </div>
-            `;
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function startVoiceCall() {
-            document.getElementById('call-modal-title').innerText = "Защищенный аудиовызов";
-            document.getElementById('call-modal-status').innerText = "Вызов абонента...";
-            document.getElementById('call-modal').classList.remove('hidden-view');
-            
-            if (connectedPeerId && peer) {
-                navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
-                    activeCall = peer.call(connectedPeerId, stream);
-                    activeCall.on('stream', remoteStream => {
-                        document.getElementById('call-modal-status').innerText = "Соединение установлено";
-                    });
-                }).catch(err => alert("Ошибка микрофона"));
-            }
-        }
-
-        function startVideoCall() {
-            document.getElementById('call-modal-title').innerText = "Защищенный видеовызов";
-            document.getElementById('call-modal-status').innerText = "Установка WebRTC видео-потока...";
-            document.getElementById('call-modal').classList.remove('hidden-view');
-
-            if (connectedPeerId && peer) {
-                navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
-                    activeCall = peer.call(connectedPeerId, stream);
-                    activeCall.on('stream', remoteStream => {
-                        const videoEl = document.getElementById('remote-video');
-                        videoEl.srcObject = remoteStream;
-                        document.getElementById('video-container').style.display = 'block';
-                        document.getElementById('call-modal-status').innerText = "Видеосвязь активна";
-                    });
-                }).catch(err => alert("Ошибка камеры/микрофона"));
-            }
-        }
-
-        function endActiveCall() {
-            if (activeCall) activeCall.close();
-            document.getElementById('video-container').style.display = 'none';
-            document.getElementById('call-modal').classList.add('hidden-view');
+        function nukeData() {
+            document.getElementById('chat-messages').innerHTML = '';
+            alert("Данные стерты.");
         }
 
         async function handleSendMessageButton() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
-
             const container = document.getElementById('chat-messages');
-            container.innerHTML += `
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="padding: 14px; border-radius: 16px; background: #dc2626; color: white; max-width: 85%;">
-                        <p style="font-size: 13px;">${text}</p>
-                    </div>
-                </div>
-            `;
+            container.innerHTML += `<div style="align-self: flex-end; background: #dc2626; padding: 10px; border-radius: 12px; color: white;">${text}</div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
-
-            if (activeConnection && activeConnection.open) {
-                activeConnection.send(text);
-            }
-
-            if (isAiChat) {
-                const loadingId = 'loading-' + Date.now();
-                container.innerHTML += `
-                    <div id="${loadingId}" style="display: flex; justify-content: flex-start;">
-                        <div style="padding: 14px; border-radius: 16px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-family: monospace; font-size: 12px;">
-                            ${aiType === 'deepseek' ? 'DeepSeek думает...' : 'ChatGPT Astra обрабатывает...'}
-                        </div>
-                    </div>
-                `;
-                container.scrollTop = container.scrollHeight;
-
-                try {
-                    const systemPrompt = aiType === 'deepseek' 
-                        ? "You are DeepSeek AI. Provide deep, analytical, technical, and precise answers in Russian."
-                        : "You are ChatGPT Astra, an advanced free AI assistant. Be direct, helpful, and clear in Russian.";
-
-                    const payload = {
-                        contents: [{ role: "user", parts: [{ text: text }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    };
-
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    const aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Не удалось получить ответ от нейросети.";
-
-                    document.getElementById(loadingId).remove();
-                    container.innerHTML += `
-                        <div style="display: flex; justify-content: flex-start;">
-                            <div style="padding: 14px; border-radius: 16px; background: #18181b; border: 1px solid #27272a; color: #f4f4f5; max-width: 85%;">
-                                <div style="font-size: 10px; font-family: monospace; color: ${aiType === 'deepseek' ? '#22d3ee' : '#60a5fa'}; margin-bottom: 4px;">${aiType === 'deepseek' ? 'DEEPSEEK' : 'CHATGPT ASTRA'}</div>
-                                <p style="font-size: 13px; white-space: pre-wrap;">${aiResponseText}</p>
-                            </div>
-                        </div>
-                    `;
-                } catch (err) {
-                    document.getElementById(loadingId).remove();
-                    container.innerHTML += `
-                        <div style="display: flex; justify-content: flex-start;">
-                            <div style="padding: 14px; border-radius: 16px; background: #18181b; border: 1px solid #7f1d1d; color: #f87171; max-width: 85%;">
-                                <p style="font-size: 13px;">Ошибка соединения с ИИ. Проверьте сеть.</p>
-                            </div>
-                        </div>
-                    `;
-                }
-                container.scrollTop = container.scrollHeight;
-            }
-        }
-
-        function nukeData() {
-            if (confirm("Уничтожить все данные сеанса?")) {
-                document.getElementById('chats-list').innerHTML = '';
-                alert("Данные стерты.");
-            }
         }
     </script>
 </body>
