@@ -228,6 +228,37 @@
         .ringing-anim {
             animation: pulse-ring 1.5s infinite;
         }
+
+        @keyframes pulse-rec {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.15); }
+        }
+        .rec-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+            animation: pulse-rec 1s infinite;
+        }
+        .video-note-bubble {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 22px var(--accent-glow);
+            background: #000;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .video-note-bubble video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -476,8 +507,8 @@
                     <button onclick="sendQuickEmoji('⚡')" style="padding: 6px 10px; border-radius: 8px; background: #0c0c0e; border: 1px solid var(--accent-border); font-size: 14px; cursor: pointer;">⚡</button>
                     <button onclick="sendQuickEmoji('🛡️')" style="padding: 6px 10px; border-radius: 8px; background: #0c0c0e; border: 1px solid var(--accent-border); font-size: 14px; cursor: pointer;">🛡️</button>
                     <div style="margin-left: auto;">
-                        <button onclick="recordVideoNote()" class="gp-button-outline" style="padding: 6px 10px;">
-                            <i data-lucide="disc" style="width: 14px; height: 14px;"></i> Кружок
+                        <button onclick="openVideoNoteRecorder()" class="gp-button-outline" style="padding: 6px 10px;">
+                            <i data-lucide="camera" style="width: 14px; height: 14px;"></i> Кружок
                         </button>
                     </div>
                 </div>
@@ -512,8 +543,30 @@
         </button>
     </nav>
 
-    <!-- Скрытый выбор файла -->
-    <input type="file" id="hidden-file-input" style="display:none;" onchange="handleFileSelected(event)">
+    <!-- Скрытый выбор файла (поддержка видео, фото, аудио) -->
+    <input type="file" id="hidden-file-input" accept="video/*,image/*,audio/*" style="display:none;" onchange="handleFileSelected(event)">
+
+    <!-- МОДАЛКА ЗАПИСИ КРУЖКА (КАК В TELEGRAM) -->
+    <div id="video-note-modal" class="modal-overlay hidden-view">
+        <div class="modal-box" style="align-items: center; max-width: 320px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="rec-dot"></div>
+                <span id="vnote-timer" style="font-family: monospace; font-size: 14px; font-weight: bold; color: #f4f4f5;">00:00 / 00:12</span>
+            </div>
+            <div style="width: 220px; height: 220px; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-shadow: 0 0 30px var(--accent-glow); background: #000; position: relative;">
+                <video id="vnote-preview" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+            </div>
+            <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">Запись видео-кружка со звуком...</p>
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <button onclick="finishAndSendVideoNote()" class="gp-button" style="flex: 1; padding: 12px;">
+                    <i data-lucide="send" style="width: 15px; height: 15px;"></i> Отправить
+                </button>
+                <button onclick="cancelVideoNote()" class="gp-button-outline" style="flex: 1; color: #a1a1aa; border-color: #27272a; background: #18181b;">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- МОДАЛКА 1: Изменение позывного -->
     <div id="edit-callsign-modal" class="modal-overlay hidden-view">
@@ -606,11 +659,22 @@
         <div class="modal-box" style="max-width: 360px;">
             <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный вызов</h3>
             <p id="call-modal-status" style="font-size: 11px; color: #34d399; font-family: monospace;">Вызов абонента...</p>
-            <div id="video-wrapper" style="display: none; position: relative; width: 100%; height: 240px; background: #000; border-radius: 14px; overflow: hidden; border: 1px solid var(--accent-border);">
-                <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
-                <video id="local-video" autoplay playsinline muted style="position: absolute; bottom: 8px; right: 8px; width: 78px; height: 106px; object-fit: cover; border-radius: 8px; border: 1px solid var(--accent); background: #111;"></video>
+            <div id="video-wrapper" style="display: none; position: relative; width: 100%; height: 260px; background: #050505; border-radius: 14px; overflow: hidden; border: 1px solid var(--accent-border);">
+                <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
+                <div id="remote-video-placeholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; font-family: monospace; font-size: 11px; pointer-events: none;">
+                    Ожидание видеопотока собеседника...
+                </div>
+                <video id="local-video" autoplay playsinline muted style="position: absolute; bottom: 8px; right: 8px; width: 82px; height: 112px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); background: #111; transform: scaleX(-1); z-index: 5;"></video>
             </div>
-            <audio id="remote-audio" autoplay playsinline style="display:none;"></audio>
+            <audio id="remote-audio" autoplay playsinline></audio>
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button onclick="forceEnableCallAudio()" class="gp-button-outline" style="flex: 1; padding: 10px; color: #34d399; border-color: rgba(16,185,129,0.5);">
+                    🔊 Звук ВКЛ
+                </button>
+                <button onclick="toggleMuteMic()" id="mute-mic-btn" class="gp-button-outline" style="flex: 1; padding: 10px;">
+                    🎙️ Микрофон
+                </button>
+            </div>
             <button onclick="endActiveCall(true)" class="gp-button" style="background: #dc2626; width: 100%; padding: 14px;">Завершить соединение</button>
         </div>
     </div>
@@ -658,19 +722,39 @@
 
         function saveChatHistories() {
             try {
-                localStorage.setItem('gp_chat_histories', JSON.stringify(chatHistories));
+                // Сохраняем текстовую историю в localStorage, не переполняя квоту тяжелыми видео
+                const slimCopy = {};
+                Object.keys(chatHistories).forEach(k => {
+                    slimCopy[k] = (chatHistories[k] || []).map(m => {
+                        if (m.mediaUrl && m.mediaUrl.length > 120000) {
+                            return { ...m, mediaUrl: null, text: m.text || '🎬 [Медиафайл сеанса]' };
+                        }
+                        return m;
+                    });
+                });
+                localStorage.setItem('gp_chat_histories', JSON.stringify(slimCopy));
             } catch (e) {}
         }
 
         // WebRTC переменные
         let rtcPeerConnection = null;
         let localStream = null;
+        let remoteMediaStream = null;
         let pendingCallFrom = null;
         let pendingCallWithVideo = false;
         let activeCallPeer = null;
         let isCurrentCallVideo = false;
         let callInviteInterval = null;
         let pendingIceCandidates = [];
+        let pendingRemoteOfferSdp = null;
+        let isMicMuted = false;
+
+        // Переменные для записи видео-кружка
+        let vnoteStream = null;
+        let vnoteRecorder = null;
+        let vnoteChunks = [];
+        let vnoteTimerInterval = null;
+        let vnoteSeconds = 0;
 
         const rtcConfig = {
             iceServers: [
@@ -730,13 +814,14 @@
         }
 
         // =========================================================================
-        // 2. СВЕРХНАДЕЖНЫЙ СЕТЕВОЙ ДВИЖОК ПОРТ-443 (NTFY SSE/WSS + ВСТРОЕННЫЙ MQTT)
-        // Не требует внешних CDN-скриптов и работает в 4G/LTE без VPN!
+        // 2. СВЕРХНАДЕЖНЫЙ СЕТЕВОЙ ДВИЖОК ПОРТ-443 + АВТО-РАЗБИЕНИЕ ПАКЕТОВ (CHUNKING)
+        // Позволяет передавать кружки, видео, фото и большие SDP без обрывов!
         // =========================================================================
         let ntfySse = null;
         let ntfyWs = null;
         let rawMqttSockets = [];
         const processedMsgIds = new Set();
+        const incomingChunkBuffers = {};
 
         function getInboxTopic(peerId) {
             return 'gp_astra_net_v6_' + peerId.replace(/[^a-z0-9_-]/gi, '_');
@@ -747,11 +832,49 @@
             connectNativeMqttPort443();
         }
 
+        // Прием любого пакета (обычного или части большого медиафайла/SDP)
+        function handleRawNetworkJson(jsonStr) {
+            try {
+                const pkt = JSON.parse(jsonStr);
+                if (!pkt) return;
+
+                if (pkt.type === '__pkt_chunk') {
+                    const chunkKey = pkt.transferId + '_' + pkt.idx;
+                    if (processedMsgIds.has(chunkKey)) return;
+                    processedMsgIds.add(chunkKey);
+
+                    if (!incomingChunkBuffers[pkt.transferId]) {
+                        incomingChunkBuffers[pkt.transferId] = {
+                            parts: new Array(pkt.total),
+                            received: 0,
+                            total: pkt.total
+                        };
+                    }
+                    const buf = incomingChunkBuffers[pkt.transferId];
+                    if (!buf.parts[pkt.idx]) {
+                        buf.parts[pkt.idx] = pkt.data;
+                        buf.received++;
+                    }
+                    if (pkt.total > 4 && buf.received < buf.total && buf.received % 4 === 0) {
+                        const pct = Math.round((buf.received / buf.total) * 100);
+                        showToast('📥 Загрузка зашифрованного медиа: ' + pct + '%...');
+                    }
+                    if (buf.received === buf.total) {
+                        const fullJson = buf.parts.join('');
+                        delete incomingChunkBuffers[pkt.transferId];
+                        handleIncomingPacket(JSON.parse(fullJson));
+                    }
+                    return;
+                }
+
+                handleIncomingPacket(pkt);
+            } catch (e) {}
+        }
+
         // Канал А: HTTPS / SSE + WSS на порту 443 через ntfy.sh
         function connectNtfyPort443() {
             const myTopic = getInboxTopic(myPeerId);
 
-            // 1. Server-Sent Events (обычный HTTPS порт 443 — никогда не блокируется)
             if (ntfySse) { try { ntfySse.close(); } catch (e) {} }
             try {
                 ntfySse = new EventSource('https://ntfy.sh/' + myTopic + '/sse');
@@ -762,14 +885,12 @@
                     try {
                         const wrapper = JSON.parse(e.data);
                         if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                            const packet = JSON.parse(wrapper.message);
-                            handleIncomingPacket(packet);
+                            handleRawNetworkJson(wrapper.message);
                         }
                     } catch (err) {}
                 };
             } catch (e) {}
 
-            // 2. Дублирующий WebSocket на порту 443
             if (ntfyWs) { try { ntfyWs.close(); } catch (e) {} }
             try {
                 ntfyWs = new WebSocket('wss://ntfy.sh/' + myTopic + '/ws');
@@ -780,8 +901,7 @@
                     try {
                         const wrapper = JSON.parse(e.data);
                         if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                            const packet = JSON.parse(wrapper.message);
-                            handleIncomingPacket(packet);
+                            handleRawNetworkJson(wrapper.message);
                         }
                     } catch (err) {}
                 };
@@ -894,9 +1014,7 @@
                             if (qos > 0) pos += 2;
                             const payloadBytes = bytes.slice(pos);
                             const jsonStr = new TextDecoder().decode(payloadBytes);
-                            try {
-                                handleIncomingPacket(JSON.parse(jsonStr));
-                            } catch (e) {}
+                            handleRawNetworkJson(jsonStr);
                         }
                     };
                     rawMqttSockets.push(ws);
@@ -913,22 +1031,16 @@
             });
         }, 25000);
 
-        // Отправка пакета другу сразу по всем каналам Порт-443
-        function sendPacketToPeer(targetPeerId, packet) {
-            packet.msgId = packet.msgId || (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
-            const targetTopic = getInboxTopic(targetPeerId);
-            const rawJson = JSON.stringify(packet);
-
-            // 1. Отправка через HTTPS POST на порт 443 (ntfy.sh)
+        // Низкоуровневая отправка одного небольшого JSON-фрейма (< 2.8 КБ)
+        function transmitSingleFrame(targetTopic, frameJson) {
             fetch('https://ntfy.sh/' + targetTopic, {
                 method: 'POST',
-                body: rawJson
+                body: frameJson
             }).then(() => {
                 setNetworkOnlineBadge();
             }).catch(() => {});
 
-            // 2. Отправка через все активные нативные MQTT сокеты
-            const mqttPkt = buildMqttPublishPacket(targetTopic, rawJson);
+            const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
             rawMqttSockets.forEach(ws => {
                 if (ws && ws.readyState === 1 && ws.isMqttReady) {
                     try { ws.send(mqttPkt); } catch (e) {}
@@ -936,8 +1048,40 @@
             });
         }
 
+        // Отправка пакета другу (с автоматической нарезкой больших кружков/видео/SDP на части)
+        async function sendPacketToPeer(targetPeerId, packet) {
+            packet.msgId = packet.msgId || (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+            const targetTopic = getInboxTopic(targetPeerId);
+            const rawJson = JSON.stringify(packet);
+
+            const CHUNK_SIZE = 2400; // Безопасный размер для ntfy.sh (лимит 4096 байт) и MQTT
+            if (rawJson.length <= CHUNK_SIZE) {
+                transmitSingleFrame(targetTopic, rawJson);
+                return;
+            }
+
+            const totalChunks = Math.ceil(rawJson.length / CHUNK_SIZE);
+            const transferId = 'tr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+
+            for (let i = 0; i < totalChunks; i++) {
+                const slice = rawJson.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+                const chunkFrame = JSON.stringify({
+                    type: '__pkt_chunk',
+                    from: myPeerId,
+                    transferId: transferId,
+                    idx: i,
+                    total: totalChunks,
+                    data: slice
+                });
+                transmitSingleFrame(targetTopic, chunkFrame);
+                if (i % 3 === 2) {
+                    await new Promise(r => setTimeout(r, 65));
+                }
+            }
+        }
+
         // =========================================================================
-        // 3. ОБРАБОТКА ВХОДЯЩИХ ПАКЕТОВ, ПОДТВЕРЖДЕНИЙ ДОСТАВКИ И ЗВОНКОВ
+        // 3. ОБРАБОТКА ВХОДЯЩИХ ПАКЕТОВ, МЕДИА, КРУЖКОВ И ЗВОНКОВ
         // =========================================================================
         function handleIncomingPacket(data) {
             if (!data || !data.from || data.from === myPeerId) return;
@@ -949,7 +1093,6 @@
             const senderId = data.from;
             const senderCallsign = data.callsign || senderId;
 
-            // Если у нас был старый контакт с таким же позывным, но старым кодом — обновляем на новый код!
             syncPeerByCallsign(senderId, senderCallsign);
 
             if (data.type === 'handshake') {
@@ -973,12 +1116,14 @@
                     id: data.chatMsgId || ('m_' + Date.now()),
                     sender: 'them',
                     author: senderCallsign,
-                    text: data.text,
+                    text: data.text || '',
+                    mediaType: data.mediaType || null,
+                    mediaUrl: data.mediaUrl || null,
+                    fileName: data.fileName || null,
                     time: getNowTime()
                 });
                 saveChatHistories();
 
-                // Немедленно отправляем подтверждение доставки (✓✓) отправителю!
                 sendPacketToPeer(senderId, {
                     type: 'delivery_ack',
                     from: myPeerId,
@@ -990,7 +1135,10 @@
                 if (currentChatId === senderId && !document.getElementById('view-active-chat').classList.contains('hidden-view')) {
                     renderMessages(senderId);
                 } else {
-                    showToast('💬 ' + senderCallsign + ': ' + data.text.slice(0, 26) + ' (Нажмите)', senderId);
+                    const previewLabel = data.mediaType === 'video_note'
+                        ? '🎥 Видео-кружок'
+                        : (data.mediaType ? '📎 Медиафайл' : (data.text || '').slice(0, 26));
+                    showToast('💬 ' + senderCallsign + ': ' + previewLabel, senderId);
                 }
             }
             else if (data.type === 'delivery_ack') {
@@ -1010,8 +1158,10 @@
                 registerPeerContactUI(senderId, senderCallsign);
                 pendingCallFrom = senderId;
                 pendingCallWithVideo = !!data.withVideo;
+                if (data.offerSdp) {
+                    pendingRemoteOfferSdp = data.offerSdp;
+                }
 
-                // Отправляем обратно сигнал, что у нас зазвонил телефон ("Гудки идут")
                 sendPacketToPeer(senderId, {
                     type: 'call_ringing',
                     from: myPeerId,
@@ -1027,7 +1177,6 @@
                 lucide.createIcons();
             }
             else if (data.type === 'call_ringing') {
-                // Друг получил сигнал вызова, прекращаем повторную отправку invite
                 if (callInviteInterval) {
                     clearInterval(callInviteInterval);
                     callInviteInterval = null;
@@ -1040,8 +1189,12 @@
                     clearInterval(callInviteInterval);
                     callInviteInterval = null;
                 }
-                document.getElementById('call-modal-status').innerText = 'Собеседник ответил • Запуск потока...';
-                startWebRTCOffer(senderId);
+                document.getElementById('call-modal-status').innerText = 'Собеседник ответил • Включение звука и видео...';
+                if (data.answerSdp && rtcPeerConnection) {
+                    handleWebRTCAnswer(data.answerSdp);
+                } else {
+                    startWebRTCOffer(senderId);
+                }
             }
             else if (data.type === 'call_declined') {
                 if (callInviteInterval) {
@@ -1388,15 +1541,47 @@
         function renderMessages(chatId) {
             const container = document.getElementById('chat-messages');
             const list = chatHistories[chatId] || [];
-            container.innerHTML = list.map(m => {
-                if (m.sender === 'me') {
-                    const checkMark = currentPeerTarget
-                        ? (m.delivered ? ' ✓✓ Доставлено' : ' ✓ Отправлено')
-                        : '';
+            container.innerHTML = list.map((m, idx) => {
+                const isMe = m.sender === 'me';
+                const checkMark = (isMe && currentPeerTarget)
+                    ? (m.delivered ? ' ✓✓ Доставлено' : ' ✓ Отправлено')
+                    : '';
+
+                // 1. Отрисовка видео-кружка как в Telegram
+                if (m.mediaType === 'video_note' && m.mediaUrl) {
+                    const vidId = 'vnote_play_' + idx;
+                    return `
+                        <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; gap: 4px;">
+                            ${!isMe ? `<span style="font-size: 10px; font-family: monospace; color: var(--accent-light); font-weight: bold; margin-left: 8px;">${m.author || 'ДРУГ'}</span>` : ''}
+                            <div class="video-note-bubble" onclick="togglePlayVideoNote('${vidId}')">
+                                <video id="${vidId}" src="${m.mediaUrl}" autoplay loop playsinline></video>
+                                <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-family: monospace; color: #fff; pointer-events: none;">
+                                    🔊 Нажмите
+                                </div>
+                            </div>
+                            <span style="font-size: 9px; color: #a1a1aa; font-family: monospace;">🎥 Кружок • ${m.time}${checkMark}</span>
+                        </div>
+                    `;
+                }
+
+                // 2. Отрисовка обычного видео, фото или аудио в сообщении
+                let mediaHtml = '';
+                if (m.mediaUrl) {
+                    if (m.mediaType === 'video') {
+                        mediaHtml = `<video src="${m.mediaUrl}" controls playsinline style="width: 100%; max-width: 260px; max-height: 260px; border-radius: 12px; background: #000; margin-bottom: 6px; display: block;"></video>`;
+                    } else if (m.mediaType === 'image') {
+                        mediaHtml = `<img src="${m.mediaUrl}" style="width: 100%; max-width: 260px; max-height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 6px; display: block;">`;
+                    } else if (m.mediaType === 'audio') {
+                        mediaHtml = `<audio src="${m.mediaUrl}" controls style="width: 230px; margin-bottom: 6px; display: block;"></audio>`;
+                    }
+                }
+
+                if (isMe) {
                     return `
                         <div style="display: flex; justify-content: flex-end;">
-                            <div style="padding: 12px 14px; border-radius: 16px 16px 4px 16px; background: var(--accent-strong); color: white; max-width: 82%;">
-                                <p style="font-size: 13px; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>
+                            <div style="padding: 12px 14px; border-radius: 16px 16px 4px 16px; background: var(--accent-strong); color: white; max-width: 84%;">
+                                ${mediaHtml}
+                                ${m.text ? `<p style="font-size: 13px; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>` : ''}
                                 <span style="font-size: 9px; opacity: 0.85; font-family: monospace; display: block; text-align: right; margin-top: 4px;">${m.time}${checkMark}</span>
                             </div>
                         </div>
@@ -1406,7 +1591,8 @@
                         <div style="display: flex; justify-content: flex-start;">
                             <div class="gp-card" style="max-width: 85%; margin: 0; padding: 12px 14px; border-radius: 16px 16px 16px 4px;">
                                 <div style="font-size: 10px; font-family: monospace; color: var(--accent-light); margin-bottom: 4px; font-weight: bold;">${m.author || 'УЗЕЛ'}</div>
-                                <p style="font-size: 13px; color: #f4f4f5; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>
+                                ${mediaHtml}
+                                ${m.text ? `<p style="font-size: 13px; color: #f4f4f5; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>` : ''}
                                 <span style="font-size: 9px; color: #71717a; font-family: monospace; display: block; margin-top: 4px;">${m.time}</span>
                             </div>
                         </div>
@@ -1416,33 +1602,164 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        function togglePlayVideoNote(videoId) {
+            const v = document.getElementById(videoId);
+            if (!v) return;
+            v.muted = false;
+            v.volume = 1.0;
+            if (v.paused) {
+                v.play().catch(() => {});
+            } else {
+                v.currentTime = 0;
+                v.play().catch(() => {});
+            }
+        }
+
         function sendQuickEmoji(emoji) {
             document.getElementById('chat-input').value = emoji;
             handleSendMessageButton();
         }
 
-        function recordVideoNote() {
-            document.getElementById('chat-input').value = '🎥 [Видео-кружок 0:05 • Зашифровано E2EE]';
-            handleSendMessageButton();
+        // =========================================================================
+        // ЗАПИСЬ НАСТОЯЩЕГО ВИДЕО-КРУЖКА (КАК В TELEGRAM)
+        // =========================================================================
+        function getSupportedVideoMime() {
+            const types = [
+                'video/webm;codecs=vp8,opus',
+                'video/webm',
+                'video/mp4'
+            ];
+            for (const t of types) {
+                if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
+                    return t;
+                }
+            }
+            return '';
+        }
+
+        async function openVideoNoteRecorder() {
+            try {
+                vnoteStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 240 }, height: { ideal: 240 } },
+                    audio: true
+                });
+            } catch (e) {
+                showToast('Разрешите доступ к камере и микрофону для записи кружка!');
+                return;
+            }
+
+            const preview = document.getElementById('vnote-preview');
+            preview.srcObject = vnoteStream;
+            preview.play().catch(() => {});
+
+            vnoteChunks = [];
+            vnoteSeconds = 0;
+            document.getElementById('vnote-timer').innerText = '00:00 / 00:12';
+            document.getElementById('video-note-modal').classList.remove('hidden-view');
+            lucide.createIcons();
+
+            const mime = getSupportedVideoMime();
+            const options = mime
+                ? { mimeType: mime, videoBitsPerSecond: 180000, audioBitsPerSecond: 32000 }
+                : { videoBitsPerSecond: 180000, audioBitsPerSecond: 32000 };
+
+            try {
+                vnoteRecorder = new MediaRecorder(vnoteStream, options);
+            } catch (e) {
+                vnoteRecorder = new MediaRecorder(vnoteStream);
+            }
+
+            vnoteRecorder.ondataavailable = (ev) => {
+                if (ev.data && ev.data.size > 0) {
+                    vnoteChunks.push(ev.data);
+                }
+            };
+
+            vnoteRecorder.start(250);
+
+            if (vnoteTimerInterval) clearInterval(vnoteTimerInterval);
+            vnoteTimerInterval = setInterval(() => {
+                vnoteSeconds++;
+                const secStr = String(vnoteSeconds).padStart(2, '0');
+                document.getElementById('vnote-timer').innerText = '00:' + secStr + ' / 00:12';
+                if (vnoteSeconds >= 12) {
+                    finishAndSendVideoNote();
+                }
+            }, 1000);
+        }
+
+        function stopVnoteHardware() {
+            if (vnoteTimerInterval) {
+                clearInterval(vnoteTimerInterval);
+                vnoteTimerInterval = null;
+            }
+            if (vnoteStream) {
+                vnoteStream.getTracks().forEach(t => t.stop());
+                vnoteStream = null;
+            }
+        }
+
+        function cancelVideoNote() {
+            if (vnoteRecorder && vnoteRecorder.state !== 'inactive') {
+                vnoteRecorder.onstop = null;
+                try { vnoteRecorder.stop(); } catch (e) {}
+            }
+            stopVnoteHardware();
+            document.getElementById('video-note-modal').classList.add('hidden-view');
+        }
+
+        function finishAndSendVideoNote() {
+            if (!vnoteRecorder) return;
+            document.getElementById('video-note-modal').classList.add('hidden-view');
+
+            vnoteRecorder.onstop = () => {
+                const mimeType = vnoteRecorder.mimeType || 'video/mp4';
+                const blob = new Blob(vnoteChunks, { type: mimeType });
+                stopVnoteHardware();
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64Video = reader.result;
+                    sendMediaMessage('video_note', base64Video, 'video-note.mp4', '');
+                };
+                reader.readAsDataURL(blob);
+            };
+
+            if (vnoteRecorder.state !== 'inactive') {
+                try { vnoteRecorder.stop(); } catch (e) {}
+            } else {
+                vnoteRecorder.onstop();
+            }
         }
 
         function triggerAttachFile() {
+            document.getElementById('hidden-file-input').value = '';
             document.getElementById('hidden-file-input').click();
         }
 
         function handleFileSelected(event) {
             const file = event.target.files[0];
             if (!file) return;
-            document.getElementById('chat-input').value = '📎 Файл: ' + file.name + ' (AES-256)';
-            handleSendMessageButton();
+
+            if (file.size > 4.5 * 1024 * 1024) {
+                showToast('Файл слишком большой (макс. 4.5 МБ для быстрой P2P-передачи)');
+                return;
+            }
+
+            let mediaType = 'file';
+            if (file.type.startsWith('video/')) mediaType = 'video';
+            else if (file.type.startsWith('image/')) mediaType = 'image';
+            else if (file.type.startsWith('audio/')) mediaType = 'audio';
+
+            showToast('Подготовка медиафайла...');
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                sendMediaMessage(mediaType, reader.result, file.name, '📎 ' + file.name);
+            };
+            reader.readAsDataURL(file);
         }
 
-        async function handleSendMessageButton() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-            input.value = '';
+        function sendMediaMessage(mediaType, mediaUrl, fileName, captionText) {
             const activeId = currentChatId;
             if (!chatHistories[activeId]) chatHistories[activeId] = [];
 
@@ -1450,85 +1767,40 @@
             chatHistories[activeId].push({
                 id: chatMsgId,
                 sender: 'me',
-                text: text,
+                text: captionText || '',
+                mediaType: mediaType,
+                mediaUrl: mediaUrl,
+                fileName: fileName,
                 time: getNowTime(),
                 delivered: false
             });
             saveChatHistories();
             renderMessages(activeId);
 
-            // Если это P2P чат с другом — отправляем по защищенному мосту 443
             if (currentPeerTarget) {
+                showToast('📤 Отправка медиафайла другу...');
                 sendPacketToPeer(currentPeerTarget, {
                     type: 'chat',
                     from: myPeerId,
                     callsign: myCallsign,
-                    text: text,
+                    text: captionText || '',
+                    mediaType: mediaType,
+                    mediaUrl: mediaUrl,
+                    fileName: fileName,
                     chatMsgId: chatMsgId
                 });
-                return;
-            }
-
-            // Если это чат с ИИ
-            if (isAiChat) {
-                const container = document.getElementById('chat-messages');
-                const loadingId = 'ai-load-' + Date.now();
-                container.insertAdjacentHTML('beforeend', `
-                    <div id="${loadingId}" style="display: flex; justify-content: flex-start;">
-                        <div class="gp-card" style="padding: 10px 14px; font-size: 12px; font-family: monospace; color: #a1a1aa;">
-                            ${aiType === 'deepseek' ? 'DeepSeek анализирует запрос...' : 'ChatGPT Astra печатает...'}
-                        </div>
-                    </div>
-                `);
-                container.scrollTop = container.scrollHeight;
-
-                const sysPrompt = aiType === 'deepseek'
-                    ? 'Ты аналитический ИИ DeepSeek R1. Отвечай подробно, четко и на русском языке.'
-                    : 'Ты полезный безлимитный ИИ-ассистент ChatGPT Astra. Отвечай дружелюбно и понятно на русском языке.';
-
-                let replyText = '';
-                try {
-                    const response = await fetch('https://text.pollinations.ai/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            messages: [
-                                { role: 'system', content: sysPrompt },
-                                { role: 'user', content: text }
-                            ],
-                            model: 'openai'
-                        })
-                    });
-                    if (response.ok) {
-                        replyText = await response.text();
-                    }
-                } catch (err) {}
-
-                if (!replyText || replyText.trim().length === 0) {
-                    replyText = 'Принято: «' + text + '». ИИ-ядро активно и обработало ваш запрос.';
-                }
-
-                const loadEl = document.getElementById(loadingId);
-                if (loadEl) loadEl.remove();
-
-                chatHistories[activeId].push({
-                    id: 'ai_' + Date.now(),
-                    sender: 'them',
-                    author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
-                    text: replyText.trim(),
-                    time: getNowTime()
-                });
-                saveChatHistories();
-                renderMessages(activeId);
             }
         }
 
         // =========================================================================
-        // 4. АУДИО И ВИДЕОЗВОНКИ WEBRTC С ПОВТОРОМ СИГНАЛА ВЫЗОВА И БУФЕРИЗАЦИЕЙ ICE
+        // 4. АУДИО И ВИДЕОЗВОНКИ WEBRTC (С ПОЛНЫМ ЗВУКОМ И ВИДЕО СОБЕСЕДНИКА)
         // =========================================================================
         async function acquireMediaStream(withVideo) {
             try {
-                return await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
+                return await navigator.mediaDevices.getUserMedia({
+                    video: withVideo ? { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 640 } } : false,
+                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+                });
             } catch (e) {
                 try {
                     return await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
@@ -1538,8 +1810,50 @@
             }
         }
 
+        // Разблокировка динамика на iOS Safari / Android Chrome при нажатии кнопки
+        function unlockMediaElementsOnUserGesture() {
+            const rv = document.getElementById('remote-video');
+            const ra = document.getElementById('remote-audio');
+            if (rv) {
+                rv.muted = false;
+                rv.volume = 1.0;
+            }
+            if (ra) {
+                ra.muted = false;
+                ra.volume = 1.0;
+            }
+        }
+
+        function forceEnableCallAudio() {
+            const rv = document.getElementById('remote-video');
+            const ra = document.getElementById('remote-audio');
+            if (rv && rv.srcObject) {
+                rv.muted = false;
+                rv.volume = 1.0;
+                rv.play().catch(() => {});
+            }
+            if (ra && ra.srcObject) {
+                ra.muted = false;
+                ra.volume = 1.0;
+                ra.play().catch(() => {});
+            }
+            showToast('🔊 Динамик и видеопоток активированы!');
+        }
+
+        function toggleMuteMic() {
+            if (!localStream) return;
+            isMicMuted = !isMicMuted;
+            localStream.getAudioTracks().forEach(t => { t.enabled = !isMicMuted; });
+            const btn = document.getElementById('mute-mic-btn');
+            if (btn) {
+                btn.innerText = isMicMuted ? '🔇 Микрофон ВЫКЛ' : '🎙️ Микрофон';
+            }
+        }
+
         async function startCall(withVideo) {
+            unlockMediaElementsOnUserGesture();
             isCurrentCallVideo = withVideo;
+            isMicMuted = false;
             const targetName = currentPeerTarget ? (knownPeers[currentPeerTarget] || currentPeerTarget) : 'Тестовый канал';
             document.getElementById('call-modal-title').innerText = withVideo ? 'Видеовызов P2P' : 'Аудиовызов P2P';
             document.getElementById('call-modal-status').innerText = currentPeerTarget
@@ -1547,25 +1861,40 @@
                 : 'Защищенный тестовый канал активен';
             document.getElementById('call-modal').classList.remove('hidden-view');
             document.getElementById('video-wrapper').style.display = withVideo ? 'block' : 'none';
+            document.getElementById('remote-video-placeholder').style.display = withVideo ? 'flex' : 'none';
 
             localStream = await acquireMediaStream(withVideo);
             if (localStream && withVideo) {
-                document.getElementById('local-video').srcObject = localStream;
+                const lv = document.getElementById('local-video');
+                lv.srcObject = localStream;
+                lv.muted = true;
+                lv.play().catch(() => {});
             }
 
             if (currentPeerTarget) {
                 activeCallPeer = currentPeerTarget;
+                // Заранее создаем WebRTC Offer и вшиваем его в вызов, чтобы соединение поднималось мгновенно
+                const pc = createPeerConnection(activeCallPeer);
+                let initialOfferSdp = null;
+                try {
+                    const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: withVideo });
+                    await pc.setLocalDescription(offer);
+                    await waitIceGathering(pc, 1200);
+                    initialOfferSdp = pc.localDescription;
+                } catch (e) {}
+
                 const sendInvite = () => {
                     if (!activeCallPeer) return;
                     sendPacketToPeer(activeCallPeer, {
                         type: 'call_invite',
                         from: myPeerId,
                         callsign: myCallsign,
-                        withVideo: withVideo
+                        withVideo: withVideo,
+                        offerSdp: initialOfferSdp
                     });
                 };
                 sendInvite();
-                // Повторяем отправку вызова каждые 2.5 сек (до 5 раз), пока телефон друга не пришлет call_ringing
+
                 if (callInviteInterval) clearInterval(callInviteInterval);
                 let attempts = 0;
                 callInviteInterval = setInterval(() => {
@@ -1576,36 +1905,49 @@
                         return;
                     }
                     sendInvite();
-                }, 2500);
+                }, 3000);
             }
         }
 
         async function acceptIncomingCall() {
+            unlockMediaElementsOnUserGesture();
             document.getElementById('incoming-call-modal').classList.add('hidden-view');
             if (!pendingCallFrom) return;
 
             activeCallPeer = pendingCallFrom;
             isCurrentCallVideo = pendingCallWithVideo;
+            isMicMuted = false;
 
             document.getElementById('call-modal-title').innerText = isCurrentCallVideo ? 'Видеовызов P2P' : 'Аудиовызов P2P';
             document.getElementById('call-modal-status').innerText = 'Установка SRTP медиа-потока...';
             document.getElementById('call-modal').classList.remove('hidden-view');
             document.getElementById('video-wrapper').style.display = isCurrentCallVideo ? 'block' : 'none';
+            document.getElementById('remote-video-placeholder').style.display = isCurrentCallVideo ? 'flex' : 'none';
 
             localStream = await acquireMediaStream(isCurrentCallVideo);
             if (localStream && isCurrentCallVideo) {
-                document.getElementById('local-video').srcObject = localStream;
+                const lv = document.getElementById('local-video');
+                lv.srcObject = localStream;
+                lv.muted = true;
+                lv.play().catch(() => {});
             }
 
-            sendPacketToPeer(activeCallPeer, {
-                type: 'call_accepted',
-                from: myPeerId,
-                callsign: myCallsign
-            });
+            if (pendingRemoteOfferSdp) {
+                const offerToProcess = pendingRemoteOfferSdp;
+                pendingRemoteOfferSdp = null;
+                await handleWebRTCOffer(activeCallPeer, offerToProcess);
+            } else {
+                sendPacketToPeer(activeCallPeer, {
+                    type: 'call_accepted',
+                    from: myPeerId,
+                    callsign: myCallsign
+                });
+            }
         }
 
         function declineIncomingCall() {
             document.getElementById('incoming-call-modal').classList.add('hidden-view');
+            pendingRemoteOfferSdp = null;
             if (pendingCallFrom) {
                 sendPacketToPeer(pendingCallFrom, {
                     type: 'call_declined',
@@ -1620,6 +1962,7 @@
                 try { rtcPeerConnection.close(); } catch (e) {}
             }
             pendingIceCandidates = [];
+            remoteMediaStream = new MediaStream();
             const pc = new RTCPeerConnection(rtcConfig);
 
             if (localStream) {
@@ -1637,14 +1980,37 @@
             };
 
             pc.ontrack = (event) => {
-                const remoteStream = event.streams[0];
-                if (isCurrentCallVideo) {
-                    const rv = document.getElementById('remote-video');
-                    if (rv) rv.srcObject = remoteStream;
+                if (event.streams && event.streams[0]) {
+                    event.streams[0].getTracks().forEach(t => remoteMediaStream.addTrack(t));
+                } else if (event.track) {
+                    remoteMediaStream.addTrack(event.track);
                 }
+
+                const rv = document.getElementById('remote-video');
                 const ra = document.getElementById('remote-audio');
-                if (ra) ra.srcObject = remoteStream;
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+
+                if (isCurrentCallVideo && rv) {
+                    rv.srcObject = remoteMediaStream;
+                    rv.muted = false;
+                    rv.volume = 1.0;
+                    rv.play().catch(() => {});
+                    document.getElementById('remote-video-placeholder').style.display = 'none';
+                }
+                if (ra) {
+                    ra.srcObject = remoteMediaStream;
+                    ra.muted = false;
+                    ra.volume = 1.0;
+                    ra.play().catch(() => {});
+                }
+                document.getElementById('call-modal-status').innerText = '🔒 На связи • Звук и видео активны';
+            };
+
+            pc.oniceconnectionstatechange = () => {
+                const st = pc.iceConnectionState;
+                if (st === 'connected' || st === 'completed') {
+                    document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+                    forceEnableCallAudio();
+                }
             };
 
             rtcPeerConnection = pc;
@@ -1698,7 +2064,13 @@
                 await flushPendingIce();
                 const answer = await pc.createAnswer();
                 await pc.setLocalDescription(answer);
-                await waitIceGathering(pc, 1400);
+                await waitIceGathering(pc, 1200);
+                sendPacketToPeer(peerId, {
+                    type: 'call_accepted',
+                    from: myPeerId,
+                    callsign: myCallsign,
+                    answerSdp: pc.localDescription
+                });
                 sendPacketToPeer(peerId, {
                     type: 'webrtc_answer',
                     from: myPeerId,
@@ -1741,6 +2113,7 @@
             }
             activeCallPeer = null;
             pendingCallFrom = null;
+            pendingRemoteOfferSdp = null;
             if (rtcPeerConnection) {
                 try { rtcPeerConnection.close(); } catch (e) {}
                 rtcPeerConnection = null;
@@ -1749,6 +2122,12 @@
                 localStream.getTracks().forEach(t => t.stop());
                 localStream = null;
             }
+            const rv = document.getElementById('remote-video');
+            const lv = document.getElementById('local-video');
+            const ra = document.getElementById('remote-audio');
+            if (rv) rv.srcObject = null;
+            if (lv) lv.srcObject = null;
+            if (ra) ra.srcObject = null;
             document.getElementById('call-modal').classList.add('hidden-view');
         }
 
