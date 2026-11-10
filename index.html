@@ -1031,20 +1031,9 @@
             });
         }, 25000);
 
-        // Низкоуровневая отправка одного небольшого JSON-фрейма (< 2.8 КБ)
+        // MQTT публикуется немедленно, HTTP идёт параллельно как резервный канал.
+        // Не ждём ntfy перед MQTT: зависший HTTP-запрос блокировал сообщения и вызовы.
         async function transmitSingleFrame(targetTopic, frameJson) {
-            let httpOk = false;
-            try {
-                const response = await fetch('https://ntfy.sh/' + targetTopic, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-                    body: frameJson
-                });
-                httpOk = response.ok;
-                if (httpOk) setNetworkOnlineBadge();
-            } catch (e) {}
-
-            // Публикуем также через доступные MQTT-соединения; не считаем открытый сокет подтверждением доставки.
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
             let mqttSent = false;
             rawMqttSockets.forEach(ws => {
@@ -1052,7 +1041,31 @@
                     try { ws.send(mqttPkt); mqttSent = true; } catch (e) {}
                 }
             });
-            if (!httpOk && !mqttSent) throw new Error('No signaling transport available');
+
+            let httpPromise;
+            try {
+                httpPromise = fetch('https://ntfy.sh/' + targetTopic, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                    body: frameJson
+                }).then(response => {
+                    if (!response.ok) throw new Error('ntfy HTTP ' + response.status);
+                    setNetworkOnlineBadge();
+                    return true;
+                }).catch(() => false);
+            } catch (e) {
+                httpPromise = Promise.resolve(false);
+            }
+
+            if (mqttSent) {
+                httpPromise.then(() => {});
+                return;
+            }
+            const httpOk = await Promise.race([
+                httpPromise,
+                new Promise(resolve => setTimeout(() => resolve(false), 8000))
+            ]);
+            if (!httpOk) throw new Error('No signaling transport available');
         }
 
         // Передача частей больших файлов: сначала MQTT, чтобы не упираться
@@ -1200,9 +1213,11 @@
                 document.getElementById('incoming-call-type').innerText = pendingCallWithVideo
                     ? '📹 Входящий защищенный ВИДЕОВЫЗОВ'
                     : '📞 Входящий защищенный АУДИОВЫЗОВ';
-                document.getElementById('incoming-call-modal').classList.remove('hidden-view');
+                const incomingModal = document.getElementById('incoming-call-modal');
+                if (incomingModal) incomingModal.classList.remove('hidden-view');
+                showToast('📞 Входящий вызов: ' + senderCallsign);
                 vibrateDevice([300, 150, 300, 150, 300]);
-                lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
             }
             else if (data.type === 'call_ringing') {
                 if (callInviteInterval) {
@@ -1959,7 +1974,14 @@
             document.getElementById('video-wrapper').style.display = withVideo ? 'block' : 'none';
             document.getElementById('remote-video-placeholder').style.display = withVideo ? 'flex' : 'none';
 
-            localStream = await acquireMediaStream(withVideo);
+            try {
+                localStream = await acquireMediaStream(withVideo);
+            } catch (mediaError) {
+                console.error('Call media permission/acquisition failed:', mediaError);
+                showToast('Не удалось включить микрофон/камеру. Разрешите доступ сайту и попробуйте снова.');
+                endActiveCall(false);
+                return;
+            }
             if (!localStream || !localStream.getAudioTracks().length) {
                 showToast('Не удалось получить микрофон. Проверьте разрешения Safari/Яндекс Браузера и повторите звонок.');
                 endActiveCall(false);
