@@ -225,9 +225,7 @@
             70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
-        .ringing-anim {
-            animation: pulse-ring 1.5s infinite;
-        }
+        .ringing-anim { animation: pulse-ring 1.5s infinite; }
 
         @keyframes pulse-rec {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -242,8 +240,8 @@
             animation: pulse-rec 1s infinite;
         }
         .video-note-bubble {
-            width: 200px;
-            height: 200px;
+            width: 190px;
+            height: 190px;
             border-radius: 50%;
             overflow: hidden;
             position: relative;
@@ -293,7 +291,6 @@
             <!-- Панель историй -->
             <div style="padding: 12px 16px; border-bottom: 1px solid var(--accent-border); background: rgba(5, 5, 5, 0.6); flex-shrink: 0;">
                 <div style="display: flex; gap: 14px; overflow-x: auto; align-items: center;" class="no-scrollbar" id="stories-strip">
-                    <!-- Кнопка добавления истории -->
                     <div onclick="openStoryModal()" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                         <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, var(--accent), #27272a); display: flex; align-items: center; justify-content: center;">
                             <div style="width: 100%; height: 100%; background: #050505; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -303,7 +300,6 @@
                         <span style="font-size: 10px; color: #a1a1aa; font-family: monospace;">Ваша история</span>
                     </div>
 
-                    <!-- История Astra Free -->
                     <div onclick="viewStory('Astra Free', '✨ Нейросеть ChatGPT Astra подключена и доступна без лимитов и ключей!')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                         <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #2563eb, #34d399); display: flex; align-items: center; justify-content: center;">
                             <div style="width: 100%; height: 100%; background: #121216; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>
@@ -311,8 +307,7 @@
                         <span style="font-size: 10px; color: #60a5fa; font-family: monospace;">Astra Free</span>
                     </div>
 
-                    <!-- История DeepSeek -->
-                    <div onclick="viewStory('DeepSeek AI', '🧠 Аналитический модуль DeepSeek R1/V3 готов к решению задач и написанию кода.')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
+                    <div onclick="viewStory('DeepSeek AI', '🧠 Аналитический модуль DeepSeek готов к решению задач и написанию кода.')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                         <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #06b6d4, var(--accent)); display: flex; align-items: center; justify-content: center;">
                             <div style="width: 100%; height: 100%; background: #121216; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #22d3ee; font-family: monospace;">AI</div>
                         </div>
@@ -336,7 +331,6 @@
 
             <!-- Список чатов -->
             <div style="flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;" id="chats-list">
-                <!-- P2P контакты вставляются сюда -->
                 <div id="p2p-chats-Anchor" style="display: flex; flex-direction: column; gap: 12px;"></div>
 
                 <!-- ChatGPT Astra -->
@@ -374,11 +368,10 @@
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                 <h2 style="font-size: 13px; font-weight: bold; color: var(--accent); font-family: monospace; text-transform: uppercase; letter-spacing: 1px;">КОНТАКТЫ & P2P СЕТЬ</h2>
                 <button onclick="openConnectFriendModal()" class="gp-button" style="padding: 10px 14px;">
-                    <i data-lucide="user-plus" style="width: 15px; height: 15px;"></i> Подключиться к другу
+                    <i data-lucide="user-plus" style="width: 15px; height: 15px;"></i> Подключить
                 </button>
             </div>
 
-            <!-- Карточка вашего сетевого кода и позывного -->
             <div class="gp-card" style="background: linear-gradient(135deg, var(--accent-bg), #060606); display: flex; flex-direction: column; gap: 12px;">
                 <div style="font-size: 10px; color: #a1a1aa; font-family: monospace; text-transform: uppercase;">ВАШ СЕТЕВОЙ КОД (СКАЖИТЕ ДРУГУ):</div>
                 <div style="display: flex; align-items: center; justify-content: space-between; background: #000; border: 1px solid var(--accent-border); padding: 10px 14px; border-radius: 12px;">
@@ -399,7 +392,7 @@
 
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 11px; color: #a1a1aa; font-family: monospace; text-transform: uppercase;">ПОДКЛЮЧЕННЫЕ ДРУЗЬЯ:</span>
-                <button onclick="clearOldContacts()" style="background: none; border: none; color: #71717a; font-size: 10px; font-family: monospace; cursor: pointer; text-decoration: underline;">Очистить старые</button>
+                <button onclick="clearOldContacts()" style="background: none; border: none; color: #71717a; font-size: 10px; font-family: monospace; cursor: pointer; text-decoration: underline;">Очистить</button>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;" id="friends-list-container"></div>
@@ -423,7 +416,6 @@
         <div id="view-settings" class="view-content hidden-view" style="padding: 16px; overflow-y: auto; gap: 16px;">
             <h2 style="font-size: 13px; font-weight: bold; color: var(--accent); font-family: monospace; text-transform: uppercase;">НАСТРОЙКИ ПРОТОКОЛА</h2>
 
-            <!-- Профиль и позывной -->
             <div class="gp-card" style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span style="font-size: 12px; color: #a1a1aa; font-family: monospace;">Ваш крипто-позывной</span>
@@ -434,39 +426,23 @@
                     <span id="settings-peer-id" style="font-size: 13px; color: #34d399; font-family: monospace; font-weight: bold;">ghost-1000</span>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="openEditCallsignModal()" class="gp-button-outline" style="flex: 1; padding: 10px;">
-                        Изменить позывной
-                    </button>
-                    <button onclick="openSetCustomPinModal()" class="gp-button-outline" style="padding: 10px;">
-                        Задать свой код
-                    </button>
+                    <button onclick="openEditCallsignModal()" class="gp-button-outline" style="flex: 1; padding: 10px;">Изменить позывной</button>
+                    <button onclick="openSetCustomPinModal()" class="gp-button-outline" style="padding: 10px;">Задать свой код</button>
                 </div>
             </div>
 
-            <!-- Смена темы оформления -->
             <div class="gp-card" style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="font-weight: bold; font-size: 12px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Тема оформления</div>
                 <div style="display: flex; gap: 8px;">
                     <button onclick="setTheme('crimson')" id="theme-btn-crimson" class="theme-chip active">
-                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; display: block;"></span>
-                        Кровавый неон
+                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; display: block;"></span> Кровавый неон
                     </button>
                     <button onclick="setTheme('cyan')" id="theme-btn-cyan" class="theme-chip">
-                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #06b6d4; display: block;"></span>
-                        Кибер-циан
+                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #06b6d4; display: block;"></span> Кибер-циан
                     </button>
                     <button onclick="setTheme('obsidian')" id="theme-btn-obsidian" class="theme-chip">
-                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #a855f7; display: block;"></span>
-                        Тень пустоты
+                        <span style="width: 18px; height: 18px; border-radius: 50%; background: #a855f7; display: block;"></span> Тень пустоты
                     </button>
-                </div>
-            </div>
-
-            <!-- Статус безопасности -->
-            <div class="gp-card" style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-weight: bold; font-size: 12px; color: #34d399; font-family: monospace; text-transform: uppercase;">Двойной мост Порт-443 (HTTPS + WSS)</div>
-                <div style="font-size: 12px; color: #a1a1aa; line-height: 1.5;">
-                    Используется прямое соединение через порт 443 без внешних скриптов. Обходит любые блокировки мобильных операторов 4G/LTE без VPN.
                 </div>
             </div>
         </div>
@@ -492,6 +468,9 @@
                     </button>
                     <button onclick="startCall(true)" title="Видеозвонок" style="background: none; border: none; color: #60a5fa; cursor: pointer; padding: 6px;">
                         <i data-lucide="video" style="width: 20px; height: 20px;"></i>
+                    </button>
+                    <button onclick="openDeleteChatModal()" title="Удалить переписку" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 6px;">
+                        <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
                     </button>
                 </div>
             </div>
@@ -543,10 +522,10 @@
         </button>
     </nav>
 
-    <!-- Скрытый выбор файла (поддержка видео, фото, аудио) -->
-    <input type="file" id="hidden-file-input" accept="video/*,image/*,audio/*" style="display:none;" onchange="handleFileSelected(event)">
+    <!-- Выбор файла -->
+    <input type="file" id="hidden-file-input" accept="video/*,image/*,audio/*,.pdf,.zip,.txt" style="display:none;" onchange="handleFileSelected(event)">
 
-    <!-- МОДАЛКА ЗАПИСИ КРУЖКА (КАК В TELEGRAM) -->
+    <!-- МОДАЛКА ЗАПИСИ КРУЖКА -->
     <div id="video-note-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="align-items: center; max-width: 320px;">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -568,7 +547,19 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 1: Изменение позывного -->
+    <!-- МОДАЛКА: УДАЛЕНИЕ ПЕРЕПИСКИ -->
+    <div id="delete-chat-modal" class="modal-overlay hidden-view">
+        <div class="modal-box">
+            <h3 style="font-weight: bold; font-size: 15px; color: #ef4444; font-family: monospace; text-transform: uppercase;">Удалить переписку?</h3>
+            <p style="font-size: 12px; color: #a1a1aa; line-height: 1.4;">Все сообщения и медиафайлы в этом чате будут очищены.</p>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="confirmDeleteChat()" class="gp-button" style="flex: 1; background: #dc2626;">Удалить</button>
+                <button onclick="closeDeleteChatModal()" class="gp-button-outline" style="flex: 1; color: #a1a1aa; border-color: #27272a; background: #18181b;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Другие модалки -->
     <div id="edit-callsign-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Изменить позывной</h3>
@@ -580,11 +571,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 1Б: Задать свой 4-значный код -->
     <div id="custom-pin-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Задать свой сетевой код</h3>
-            <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">Введите 4 цифры (например, 9627), чтобы вернуть прежний код:</p>
             <input type="text" id="custom-pin-input" maxlength="4" placeholder="9627" class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="saveCustomPin()" class="gp-button" style="flex: 1;">Применить</button>
@@ -593,11 +582,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 2: Подключение к другу по коду P2P -->
     <div id="connect-friend-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Подключиться к другу</h3>
-            <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">Введите 4 цифры кода друга (он указан у него в самой верхней строке экрана):</p>
             <input type="text" id="friend-peer-id-input" placeholder="Например: 4331" class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="connectToFriendSubmit()" class="gp-button" style="flex: 1;">Подключить</button>
@@ -606,10 +593,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 3: Создание канала -->
     <div id="create-channel-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
-            <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Новый зашифрованный канал</h3>
+            <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Новый канал</h3>
             <input type="text" id="new-channel-name" placeholder="Название канала..." class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="createChannelSubmit()" class="gp-button" style="flex: 1;">Создать</button>
@@ -618,11 +604,10 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 4: Публикация истории -->
     <div id="story-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Опубликовать историю</h3>
-            <input type="text" id="story-text-input" placeholder="Текст статуса или истории..." class="gp-input" style="text-align: center;">
+            <input type="text" id="story-text-input" placeholder="Текст истории..." class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="publishStorySubmit()" class="gp-button" style="flex: 1;">Выложить</button>
                 <button onclick="closeStoryModal()" class="gp-button-outline" style="flex: 1; color: #a1a1aa; border-color: #27272a; background: #18181b;">Отмена</button>
@@ -630,7 +615,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 5: Просмотр истории -->
     <div id="view-story-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <div id="view-story-author" style="font-size: 12px; color: var(--accent-light); font-family: monospace; font-weight: bold;">Автор</div>
@@ -639,7 +623,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 6: ВХОДЯЩИЙ ВЫЗОВ -->
     <div id="incoming-call-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="border-color: #10b981; box-shadow: 0 0 35px rgba(16, 185, 129, 0.4);">
             <div class="ringing-anim" style="width: 68px; height: 68px; margin: 0 auto; border-radius: 50%; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #34d399;">
@@ -654,7 +637,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
     <div id="call-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="max-width: 360px;">
             <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный вызов</h3>
@@ -668,18 +650,13 @@
             </div>
             <audio id="remote-audio" autoplay playsinline></audio>
             <div style="display: flex; gap: 8px; width: 100%;">
-                <button onclick="forceEnableCallAudio()" class="gp-button-outline" style="flex: 1; padding: 10px; color: #34d399; border-color: rgba(16,185,129,0.5);">
-                    🔊 Звук ВКЛ
-                </button>
-                <button onclick="toggleMuteMic()" id="mute-mic-btn" class="gp-button-outline" style="flex: 1; padding: 10px;">
-                    🎙️ Микрофон
-                </button>
+                <button onclick="forceEnableCallAudio()" class="gp-button-outline" style="flex: 1; padding: 10px; color: #34d399; border-color: rgba(16,185,129,0.5);">🔊 Звук ВКЛ</button>
+                <button onclick="toggleMuteMic()" id="mute-mic-btn" class="gp-button-outline" style="flex: 1; padding: 10px;">🎙️ Микрофон</button>
             </div>
             <button onclick="endActiveCall(true)" class="gp-button" style="background: #dc2626; width: 100%; padding: 14px;">Завершить соединение</button>
         </div>
     </div>
 
-    <!-- МОДАЛКА 8: Подтверждение очистки данных (Бункер) -->
     <div id="nuke-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #ef4444; font-family: monospace; text-transform: uppercase;">Стереть все данные?</h3>
@@ -694,7 +671,6 @@
     <script>
         lucide.createIcons();
 
-        // 1. ИДЕНТИФИКАЦИЯ УЗЛА
         let savedPin = localStorage.getItem('gp_pin_code');
         if (!savedPin || !/^\d{4}$/.test(savedPin)) {
             savedPin = Math.floor(1000 + Math.random() * 9000).toString();
@@ -713,20 +689,19 @@
         let knownPeers = JSON.parse(localStorage.getItem('gp_known_peers') || '{}');
         const chatHistories = JSON.parse(localStorage.getItem('gp_chat_histories') || 'null') || {
             'astra': [
-                { id: 'init1', sender: 'them', author: 'CHATGPT ASTRA', text: 'Квантовый шлюз активен. Я ChatGPT Astra — задавайте любой вопрос, ограничений нет.', time: '12:00' }
+                { id: 'init1', sender: 'them', author: 'CHATGPT ASTRA', text: 'Квантовый шлюз активен. Я ChatGPT Astra — задавайте любой вопрос.', time: '12:00' }
             ],
             'deepseek': [
-                { id: 'init2', sender: 'them', author: 'DEEPSEEK NEURAL', text: 'Аналитическое ядро DeepSeek готово к работе. Жду ваших задач или вопросов по коду.', time: '12:00' }
+                { id: 'init2', sender: 'them', author: 'DEEPSEEK NEURAL', text: 'Аналитическое ядро DeepSeek готово к работе. Жду ваших задач.', time: '12:00' }
             ]
         };
 
         function saveChatHistories() {
             try {
-                // Сохраняем текстовую историю в localStorage, не переполняя квоту тяжелыми видео
                 const slimCopy = {};
                 Object.keys(chatHistories).forEach(k => {
                     slimCopy[k] = (chatHistories[k] || []).map(m => {
-                        if (m.mediaUrl && m.mediaUrl.length > 120000) {
+                        if (m.mediaUrl && m.mediaUrl.length > 250000) {
                             return { ...m, mediaUrl: null, text: m.text || '🎬 [Медиафайл сеанса]' };
                         }
                         return m;
@@ -736,7 +711,6 @@
             } catch (e) {}
         }
 
-        // WebRTC переменные
         let rtcPeerConnection = null;
         let localStream = null;
         let remoteMediaStream = null;
@@ -749,7 +723,6 @@
         let pendingRemoteOfferSdp = null;
         let isMicMuted = false;
 
-        // Переменные для записи видео-кружка
         let vnoteStream = null;
         let vnoteRecorder = null;
         let vnoteChunks = [];
@@ -760,21 +733,8 @@
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' },
-                {
-                    urls: 'turn:openrelay.metered.ca:80',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
-                },
-                {
-                    urls: 'turn:openrelay.metered.ca:443',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
-                },
-                {
-                    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
-                }
+                { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+                { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' }
             ]
         };
 
@@ -813,10 +773,6 @@
             }
         }
 
-        // =========================================================================
-        // 2. СВЕРХНАДЕЖНЫЙ СЕТЕВОЙ ДВИЖОК ПОРТ-443 + АВТО-РАЗБИЕНИЕ ПАКЕТОВ (CHUNKING)
-        // Позволяет передавать кружки, видео, фото и большие SDP без обрывов!
-        // =========================================================================
         let ntfySse = null;
         let ntfyWs = null;
         let rawMqttSockets = [];
@@ -824,7 +780,7 @@
         const incomingChunkBuffers = {};
 
         function getInboxTopic(peerId) {
-            return 'gp_astra_net_v6_' + peerId.replace(/[^a-z0-9_-]/gi, '_');
+            return 'gp_astra_net_v8_' + peerId.replace(/[^a-z0-9_-]/gi, '_');
         }
 
         function initPort443Network() {
@@ -832,7 +788,6 @@
             connectNativeMqttPort443();
         }
 
-        // Прием любого пакета (обычного или части большого медиафайла/SDP)
         function handleRawNetworkJson(jsonStr) {
             try {
                 const pkt = JSON.parse(jsonStr);
@@ -844,20 +799,12 @@
                     processedMsgIds.add(chunkKey);
 
                     if (!incomingChunkBuffers[pkt.transferId]) {
-                        incomingChunkBuffers[pkt.transferId] = {
-                            parts: new Array(pkt.total),
-                            received: 0,
-                            total: pkt.total
-                        };
+                        incomingChunkBuffers[pkt.transferId] = { parts: new Array(pkt.total), received: 0, total: pkt.total };
                     }
                     const buf = incomingChunkBuffers[pkt.transferId];
                     if (!buf.parts[pkt.idx]) {
                         buf.parts[pkt.idx] = pkt.data;
                         buf.received++;
-                    }
-                    if (pkt.total > 4 && buf.received < buf.total && buf.received % 4 === 0) {
-                        const pct = Math.round((buf.received / buf.total) * 100);
-                        showToast('📥 Загрузка зашифрованного медиа: ' + pct + '%...');
                     }
                     if (buf.received === buf.total) {
                         const fullJson = buf.parts.join('');
@@ -871,22 +818,16 @@
             } catch (e) {}
         }
 
-        // Канал А: HTTPS / SSE + WSS на порту 443 через ntfy.sh
         function connectNtfyPort443() {
             const myTopic = getInboxTopic(myPeerId);
-
             if (ntfySse) { try { ntfySse.close(); } catch (e) {} }
             try {
                 ntfySse = new EventSource('https://ntfy.sh/' + myTopic + '/sse');
-                ntfySse.onopen = () => {
-                    setNetworkOnlineBadge();
-                };
+                ntfySse.onopen = () => setNetworkOnlineBadge();
                 ntfySse.onmessage = (e) => {
                     try {
                         const wrapper = JSON.parse(e.data);
-                        if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                            handleRawNetworkJson(wrapper.message);
-                        }
+                        if (wrapper && wrapper.event === 'message' && wrapper.message) handleRawNetworkJson(wrapper.message);
                     } catch (err) {}
                 };
             } catch (e) {}
@@ -894,24 +835,17 @@
             if (ntfyWs) { try { ntfyWs.close(); } catch (e) {} }
             try {
                 ntfyWs = new WebSocket('wss://ntfy.sh/' + myTopic + '/ws');
-                ntfyWs.onopen = () => {
-                    setNetworkOnlineBadge();
-                };
+                ntfyWs.onopen = () => setNetworkOnlineBadge();
                 ntfyWs.onmessage = (e) => {
                     try {
                         const wrapper = JSON.parse(e.data);
-                        if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                            handleRawNetworkJson(wrapper.message);
-                        }
+                        if (wrapper && wrapper.event === 'message' && wrapper.message) handleRawNetworkJson(wrapper.message);
                     } catch (err) {}
                 };
-                ntfyWs.onclose = () => {
-                    setTimeout(connectNtfyPort443, 4000);
-                };
+                ntfyWs.onclose = () => { setTimeout(connectNtfyPort443, 4000); };
             } catch (e) {}
         }
 
-        // Канал Б: Встроенный бинарный протокол MQTT v3.1.1 поверх нативного WebSocket (0 внешних библиотек!)
         function encodeMqttUtf8(str) {
             const bytes = new TextEncoder().encode(str);
             const out = new Uint8Array(2 + bytes.length);
@@ -973,19 +907,13 @@
         function connectNativeMqttPort443() {
             rawMqttSockets.forEach(s => { try { s.close(); } catch (e) {} });
             rawMqttSockets = [];
-
-            const urls = [
-                'wss://mqtt.eclipseprojects.io:443/mqtt',
-                'wss://broker.emqx.io:8084/mqtt',
-                'wss://broker.hivemq.com:8884/mqtt'
-            ];
-
+            const urls = ['wss://mqtt.eclipseprojects.io:443/mqtt', 'wss://broker.emqx.io:8084/mqtt'];
             urls.forEach(url => {
                 try {
                     const ws = new WebSocket(url, 'mqtt');
                     ws.binaryType = 'arraybuffer';
                     ws.onopen = () => {
-                        const cid = 'gp6_' + savedPin + '_' + Math.random().toString(16).slice(2, 7);
+                        const cid = 'gp8_' + savedPin + '_' + Math.random().toString(16).slice(2, 7);
                         ws.send(buildMqttConnectPacket(cid));
                     };
                     ws.onmessage = (evt) => {
@@ -993,15 +921,11 @@
                         if (!bytes.length) return;
                         const type = (bytes[0] >> 4) & 0x0f;
                         if (type === 2) {
-                            // CONNACK -> подписываемся на свой входящий канал
                             setNetworkOnlineBadge();
                             ws.isMqttReady = true;
                             ws.send(buildMqttSubscribePacket(getInboxTopic(myPeerId)));
                         } else if (type === 3) {
-                            // PUBLISH -> читаем JSON
-                            let pos = 1;
-                            let mult = 1;
-                            let rem = 0;
+                            let pos = 1, mult = 1, rem = 0;
                             while (pos < bytes.length) {
                                 const b = bytes[pos++];
                                 rem += (b & 0x7f) * mult;
@@ -1012,9 +936,7 @@
                             pos += 2 + tLen;
                             const qos = (bytes[0] >> 1) & 0x03;
                             if (qos > 0) pos += 2;
-                            const payloadBytes = bytes.slice(pos);
-                            const jsonStr = new TextDecoder().decode(payloadBytes);
-                            handleRawNetworkJson(jsonStr);
+                            handleRawNetworkJson(new TextDecoder().decode(bytes.slice(pos)));
                         }
                     };
                     rawMqttSockets.push(ws);
@@ -1022,7 +944,6 @@
             });
         }
 
-        // Пинг для поддержания открытых WebSocket соединений
         setInterval(() => {
             rawMqttSockets.forEach(ws => {
                 if (ws && ws.readyState === 1 && ws.isMqttReady) {
@@ -1031,15 +952,8 @@
             });
         }, 25000);
 
-        // Низкоуровневая отправка одного небольшого JSON-фрейма (< 2.8 КБ)
         function transmitSingleFrame(targetTopic, frameJson) {
-            fetch('https://ntfy.sh/' + targetTopic, {
-                method: 'POST',
-                body: frameJson
-            }).then(() => {
-                setNetworkOnlineBadge();
-            }).catch(() => {});
-
+            fetch('https://ntfy.sh/' + targetTopic, { method: 'POST', body: frameJson }).catch(() => {});
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
             rawMqttSockets.forEach(ws => {
                 if (ws && ws.readyState === 1 && ws.isMqttReady) {
@@ -1048,13 +962,12 @@
             });
         }
 
-        // Отправка пакета другу (с автоматической нарезкой больших кружков/видео/SDP на части)
         async function sendPacketToPeer(targetPeerId, packet) {
             packet.msgId = packet.msgId || (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
             const targetTopic = getInboxTopic(targetPeerId);
             const rawJson = JSON.stringify(packet);
+            const CHUNK_SIZE = 2200;
 
-            const CHUNK_SIZE = 2400; // Безопасный размер для ntfy.sh (лимит 4096 байт) и MQTT
             if (rawJson.length <= CHUNK_SIZE) {
                 transmitSingleFrame(targetTopic, rawJson);
                 return;
@@ -1074,15 +987,10 @@
                     data: slice
                 });
                 transmitSingleFrame(targetTopic, chunkFrame);
-                if (i % 3 === 2) {
-                    await new Promise(r => setTimeout(r, 65));
-                }
+                if (i % 2 === 1) await new Promise(r => setTimeout(r, 45));
             }
         }
 
-        // =========================================================================
-        // 3. ОБРАБОТКА ВХОДЯЩИХ ПАКЕТОВ, МЕДИА, КРУЖКОВ И ЗВОНКОВ
-        // =========================================================================
         function handleIncomingPacket(data) {
             if (!data || !data.from || data.from === myPeerId) return;
             if (data.msgId) {
@@ -1092,22 +1000,17 @@
 
             const senderId = data.from;
             const senderCallsign = data.callsign || senderId;
-
             syncPeerByCallsign(senderId, senderCallsign);
 
             if (data.type === 'handshake') {
                 registerPeerContactUI(senderId, senderCallsign);
-                sendPacketToPeer(senderId, {
-                    type: 'handshake_ack',
-                    from: myPeerId,
-                    callsign: myCallsign
-                });
+                sendPacketToPeer(senderId, { type: 'handshake_ack', from: myPeerId, callsign: myCallsign });
                 vibrateDevice([100, 50, 100]);
-                showToast('⚡ Друг подключился: ' + senderCallsign + ' (' + senderId + ')', senderId);
+                showToast('⚡ Друг подключился: ' + senderCallsign, senderId);
             }
             else if (data.type === 'handshake_ack') {
                 registerPeerContactUI(senderId, senderCallsign);
-                showToast('✅ Двусторонняя связь с ' + senderCallsign + ' активна!', senderId);
+                showToast('✅ Связь с ' + senderCallsign + ' активна!', senderId);
             }
             else if (data.type === 'chat') {
                 registerPeerContactUI(senderId, senderCallsign);
@@ -1124,110 +1027,65 @@
                 });
                 saveChatHistories();
 
-                sendPacketToPeer(senderId, {
-                    type: 'delivery_ack',
-                    from: myPeerId,
-                    callsign: myCallsign,
-                    chatMsgId: data.chatMsgId
-                });
-
+                sendPacketToPeer(senderId, { type: 'delivery_ack', from: myPeerId, chatMsgId: data.chatMsgId });
                 vibrateDevice([120]);
+
                 if (currentChatId === senderId && !document.getElementById('view-active-chat').classList.contains('hidden-view')) {
                     renderMessages(senderId);
                 } else {
-                    const previewLabel = data.mediaType === 'video_note'
-                        ? '🎥 Видео-кружок'
-                        : (data.mediaType ? '📎 Медиафайл' : (data.text || '').slice(0, 26));
+                    const previewLabel = data.mediaType === 'video_note' ? '🎥 Видео-кружок' : (data.mediaType ? '📎 Медиафайл' : (data.text || '').slice(0, 26));
                     showToast('💬 ' + senderCallsign + ': ' + previewLabel, senderId);
                 }
             }
             else if (data.type === 'delivery_ack') {
-                registerPeerContactUI(senderId, senderCallsign);
                 const list = chatHistories[senderId] || [];
-                list.forEach(m => {
-                    if (m.id === data.chatMsgId) {
-                        m.delivered = true;
-                    }
-                });
+                list.forEach(m => { if (m.id === data.chatMsgId) m.delivered = true; });
                 saveChatHistories();
-                if (currentChatId === senderId) {
-                    renderMessages(senderId);
-                }
+                if (currentChatId === senderId) renderMessages(senderId);
             }
             else if (data.type === 'call_invite') {
                 registerPeerContactUI(senderId, senderCallsign);
                 pendingCallFrom = senderId;
                 pendingCallWithVideo = !!data.withVideo;
-                if (data.offerSdp) {
-                    pendingRemoteOfferSdp = data.offerSdp;
-                }
+                if (data.offerSdp) pendingRemoteOfferSdp = data.offerSdp;
 
-                sendPacketToPeer(senderId, {
-                    type: 'call_ringing',
-                    from: myPeerId,
-                    callsign: myCallsign
-                });
+                sendPacketToPeer(senderId, { type: 'call_ringing', from: myPeerId, callsign: myCallsign });
 
                 document.getElementById('incoming-caller-name').innerText = senderCallsign + ' (' + senderId + ')';
-                document.getElementById('incoming-call-type').innerText = pendingCallWithVideo
-                    ? '📹 Входящий защищенный ВИДЕОВЫЗОВ'
-                    : '📞 Входящий защищенный АУДИОВЫЗОВ';
+                document.getElementById('incoming-call-type').innerText = pendingCallWithVideo ? '📹 Входящий ВИДЕОВЫЗОВ' : '📞 Входящий АУДИОВЫЗОВ';
                 document.getElementById('incoming-call-modal').classList.remove('hidden-view');
                 vibrateDevice([300, 150, 300, 150, 300]);
                 lucide.createIcons();
             }
             else if (data.type === 'call_ringing') {
-                if (callInviteInterval) {
-                    clearInterval(callInviteInterval);
-                    callInviteInterval = null;
-                }
+                if (callInviteInterval) { clearInterval(callInviteInterval); callInviteInterval = null; }
                 const st = document.getElementById('call-modal-status');
-                if (st) st.innerText = '🔔 Идут гудки (у ' + senderCallsign + ' звонит телефон)...';
+                if (st) st.innerText = '🔔 Идут гудки (у друга звонит телефон)...';
             }
             else if (data.type === 'call_accepted') {
-                if (callInviteInterval) {
-                    clearInterval(callInviteInterval);
-                    callInviteInterval = null;
-                }
-                document.getElementById('call-modal-status').innerText = 'Собеседник ответил • Включение звука и видео...';
-                if (data.answerSdp && rtcPeerConnection) {
-                    handleWebRTCAnswer(data.answerSdp);
-                } else {
-                    startWebRTCOffer(senderId);
-                }
+                if (callInviteInterval) { clearInterval(callInviteInterval); callInviteInterval = null; }
+                document.getElementById('call-modal-status').innerText = 'Собеседник ответил • Соединение...';
+                if (data.answerSdp && rtcPeerConnection) handleWebRTCAnswer(data.answerSdp);
+                else startWebRTCOffer(senderId);
             }
             else if (data.type === 'call_declined') {
-                if (callInviteInterval) {
-                    clearInterval(callInviteInterval);
-                    callInviteInterval = null;
-                }
+                if (callInviteInterval) { clearInterval(callInviteInterval); callInviteInterval = null; }
                 endActiveCall(false);
                 showToast('Абонент отклонил вызов');
             }
             else if (data.type === 'call_hangup') {
-                if (callInviteInterval) {
-                    clearInterval(callInviteInterval);
-                    callInviteInterval = null;
-                }
+                if (callInviteInterval) { clearInterval(callInviteInterval); callInviteInterval = null; }
                 document.getElementById('incoming-call-modal').classList.add('hidden-view');
                 endActiveCall(false);
-                showToast('Вызов завершен собеседником');
+                showToast('Вызов завершен');
             }
-            else if (data.type === 'webrtc_offer') {
-                handleWebRTCOffer(senderId, data.sdp);
-            }
-            else if (data.type === 'webrtc_answer') {
-                handleWebRTCAnswer(data.sdp);
-            }
-            else if (data.type === 'webrtc_ice') {
-                handleWebRTCIce(data.candidate);
-            }
+            else if (data.type === 'webrtc_offer') { handleWebRTCOffer(senderId, data.sdp); }
+            else if (data.type === 'webrtc_answer') { handleWebRTCAnswer(data.sdp); }
+            else if (data.type === 'webrtc_ice') { handleWebRTCIce(data.candidate); }
         }
 
         function vibrateDevice(pattern) {
-            try {
-                if (navigator.vibrate) navigator.vibrate(pattern);
-            } catch (e) {}
+            try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
         }
 
         function syncPeerByCallsign(newPeerId, callsign) {
@@ -1247,16 +1105,12 @@
             text.innerText = msg;
             box.style.display = 'flex';
             clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => {
-                box.style.display = 'none';
-            }, 4000);
+            window.toastTimer = setTimeout(() => { box.style.display = 'none'; }, 4000);
         }
 
         function handleToastClick() {
             document.getElementById('toast-box').style.display = 'none';
-            if (lastToastPeer) {
-                openChat(lastToastPeer, knownPeers[lastToastPeer] || lastToastPeer, false, null, lastToastPeer);
-            }
+            if (lastToastPeer) openChat(lastToastPeer, knownPeers[lastToastPeer] || lastToastPeer, false, null, lastToastPeer);
         }
 
         function setTheme(theme) {
@@ -1265,7 +1119,6 @@
             document.body.classList.remove('theme-cyan', 'theme-obsidian');
             if (theme === 'cyan') document.body.classList.add('theme-cyan');
             if (theme === 'obsidian') document.body.classList.add('theme-obsidian');
-
             document.querySelectorAll('.theme-chip').forEach(el => el.classList.remove('active'));
             const activeBtn = document.getElementById('theme-btn-' + theme);
             if (activeBtn) activeBtn.classList.add('active');
@@ -1280,14 +1133,11 @@
             lucide.createIcons();
         }
 
-        // --- ПОЗЫВНОЙ И КОД ---
         function openEditCallsignModal() {
             document.getElementById('new-callsign-input').value = myCallsign;
             document.getElementById('edit-callsign-modal').classList.remove('hidden-view');
         }
-        function closeEditCallsignModal() {
-            document.getElementById('edit-callsign-modal').classList.add('hidden-view');
-        }
+        function closeEditCallsignModal() { document.getElementById('edit-callsign-modal').classList.add('hidden-view'); }
         function saveNewCallsign() {
             const val = document.getElementById('new-callsign-input').value.trim();
             if (val) {
@@ -1295,13 +1145,6 @@
                 localStorage.setItem('gp_callsign', myCallsign);
                 updateIdentityUI();
                 showToast('Позывной сохранен: ' + myCallsign);
-                Object.keys(knownPeers).forEach(pid => {
-                    sendPacketToPeer(pid, {
-                        type: 'handshake_ack',
-                        from: myPeerId,
-                        callsign: myCallsign
-                    });
-                });
             }
             closeEditCallsignModal();
         }
@@ -1310,9 +1153,7 @@
             document.getElementById('custom-pin-input').value = savedPin;
             document.getElementById('custom-pin-modal').classList.remove('hidden-view');
         }
-        function closeSetCustomPinModal() {
-            document.getElementById('custom-pin-modal').classList.add('hidden-view');
-        }
+        function closeSetCustomPinModal() { document.getElementById('custom-pin-modal').classList.add('hidden-view'); }
         function saveCustomPin() {
             const val = document.getElementById('custom-pin-input').value.trim();
             if (/^\d{4}$/.test(val)) {
@@ -1321,11 +1162,9 @@
                 myPeerId = 'ghost-' + savedPin;
                 updateIdentityUI();
                 initPort443Network();
-                showToast('Ваш сетевой код теперь: ' + myPeerId);
+                showToast('Код обновлен: ' + myPeerId);
                 closeSetCustomPinModal();
-            } else {
-                showToast('Введите ровно 4 цифры!');
-            }
+            } else { showToast('Введите ровно 4 цифры!'); }
         }
 
         function clearOldContacts() {
@@ -1333,41 +1172,31 @@
             localStorage.removeItem('gp_known_peers');
             document.getElementById('friends-list-container').innerHTML = '';
             document.getElementById('p2p-chats-Anchor').innerHTML = '';
-            showToast('Старые контакты очищены');
+            showToast('Контакты очищены');
         }
 
         function restoreSavedContacts() {
-            Object.keys(knownPeers).forEach(pid => {
-                registerPeerContactUI(pid, knownPeers[pid]);
-            });
+            Object.keys(knownPeers).forEach(pid => { registerPeerContactUI(pid, knownPeers[pid]); });
         }
 
         function registerPeerContactUI(peerId, displayName) {
-            if (!displayName || displayName.startsWith('ghost-')) {
-                displayName = knownPeers[peerId] || peerId;
-            }
+            if (!displayName || displayName.startsWith('ghost-')) displayName = knownPeers[peerId] || peerId;
             knownPeers[peerId] = displayName;
             localStorage.setItem('gp_known_peers', JSON.stringify(knownPeers));
 
             if (!chatHistories[peerId]) {
-                chatHistories[peerId] = [
-                    { id: 'w_' + peerId, sender: 'them', author: displayName.toUpperCase(), text: 'Защищенный P2P-канал (' + peerId + '). Сообщения и звонки идут через Порт-443.', time: getNowTime() }
-                ];
+                chatHistories[peerId] = [{ id: 'w_' + peerId, sender: 'them', author: displayName.toUpperCase(), text: 'Защищенный P2P-канал (' + peerId + ').', time: getNowTime() }];
             }
 
-            const existingFriendCard = document.getElementById('contact-card-' + peerId);
-            if (existingFriendCard) {
-                const nameEl = existingFriendCard.querySelector('.peer-name-label');
-                if (nameEl) nameEl.innerText = displayName;
-            } else {
-                const friendsContainer = document.getElementById('friends-list-container');
+            const friendsContainer = document.getElementById('friends-list-container');
+            if (!document.getElementById('contact-card-' + peerId)) {
                 friendsContainer.insertAdjacentHTML('afterbegin', `
                     <div id="contact-card-${peerId}" class="gp-card" style="display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; display: flex; align-items: center; justify-content: center; color: #34d399; font-family: monospace; font-weight: bold; font-size: 13px;">P2P</div>
                             <div>
-                                <div class="peer-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
-                                <div style="font-size: 11px; color: #34d399; font-family: monospace;">Код: ${peerId} • На связи</div>
+                                <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
+                                <div style="font-size: 11px; color: #34d399; font-family: monospace;">Код: ${peerId}</div>
                             </div>
                         </div>
                         <button onclick="openChat('${peerId}', '${displayName}', false, null, '${peerId}')" class="gp-button" style="padding: 10px;">
@@ -1377,117 +1206,81 @@
                 `);
             }
 
-            const existingChatCard = document.getElementById('chat-card-' + peerId);
-            if (existingChatCard) {
-                const chatNameEl = existingChatCard.querySelector('.chat-name-label');
-                if (chatNameEl) chatNameEl.innerText = displayName;
-            } else {
-                const p2pAnchor = document.getElementById('p2p-chats-Anchor');
+            const p2pAnchor = document.getElementById('p2p-chats-Anchor');
+            if (!document.getElementById('chat-card-' + peerId)) {
                 p2pAnchor.insertAdjacentHTML('afterbegin', `
                     <div id="chat-card-${peerId}" onclick="openChat('${peerId}', '${displayName}', false, null, '${peerId}')" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-color: rgba(16, 185, 129, 0.6);">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div style="width: 46px; height: 46px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #34d399; font-family: monospace; font-weight: bold;">P2P</div>
                             <div>
-                                <div class="chat-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
-                                <div style="font-size: 12px; color: #34d399; margin-top: 3px;">Код друга: ${peerId}</div>
+                                <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
+                                <div style="font-size: 12px; color: #34d399; margin-top: 3px;">Код: ${peerId}</div>
                             </div>
                         </div>
                         <span style="font-size: 10px; color: #34d399; font-family: monospace; font-weight: bold;">LIVE</span>
                     </div>
                 `);
             }
-
-            if (currentChatId === peerId) {
-                document.getElementById('active-chat-title').innerText = displayName;
-                document.getElementById('active-chat-status').innerText = 'P2P Канал • Код: ' + peerId;
-            }
             lucide.createIcons();
         }
 
         function copyMyId() {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(myPeerId);
-            }
-            showToast('Ваш код скопирован: ' + myPeerId);
+            if (navigator.clipboard) navigator.clipboard.writeText(myPeerId);
+            showToast('Код скопирован: ' + myPeerId);
         }
 
         function openConnectFriendModal() {
             document.getElementById('friend-peer-id-input').value = '';
             document.getElementById('connect-friend-modal').classList.remove('hidden-view');
         }
-        function closeConnectFriendModal() {
-            document.getElementById('connect-friend-modal').classList.add('hidden-view');
-        }
+        function closeConnectFriendModal() { document.getElementById('connect-friend-modal').classList.add('hidden-view'); }
         function connectToFriendSubmit() {
-            let rawInput = document.getElementById('friend-peer-id-input').value.trim().toLowerCase();
+            const rawInput = document.getElementById('friend-peer-id-input').value.trim().toLowerCase();
             if (!rawInput) return;
             const digitsMatch = rawInput.match(/\d{4}/);
-            let target = digitsMatch ? ('ghost-' + digitsMatch[0]) : rawInput;
-
-            if (target === myPeerId) {
-                showToast('Это ваш собственный код!');
-                return;
-            }
+            const target = digitsMatch ? ('ghost-' + digitsMatch[0]) : rawInput;
             closeConnectFriendModal();
 
             registerPeerContactUI(target, knownPeers[target] || target);
-            sendPacketToPeer(target, {
-                type: 'handshake',
-                from: myPeerId,
-                callsign: myCallsign
-            });
+            sendPacketToPeer(target, { type: 'handshake', from: myPeerId, callsign: myCallsign });
             showToast('Сигнал отправлен узлу ' + target);
             openChat(target, knownPeers[target] || target, false, null, target);
         }
 
-        // --- КАНАЛЫ И ИСТОРИИ ---
         function openCreateChannelModal() {
             document.getElementById('new-channel-name').value = '';
             document.getElementById('create-channel-modal').classList.remove('hidden-view');
         }
-        function closeCreateChannelModal() {
-            document.getElementById('create-channel-modal').classList.add('hidden-view');
-        }
+        function closeCreateChannelModal() { document.getElementById('create-channel-modal').classList.add('hidden-view'); }
         function createChannelSubmit() {
             const name = document.getElementById('new-channel-name').value.trim();
             if (!name) return;
             const cid = 'chan-' + Date.now();
-            chatHistories[cid] = [
-                { id: 'c_' + cid, sender: 'them', author: name.toUpperCase(), text: 'Защищенный канал «' + name + '» создан.', time: getNowTime() }
-            ];
+            chatHistories[cid] = [{ id: 'c_' + cid, sender: 'them', author: name.toUpperCase(), text: 'Канал «' + name + '» создан.', time: getNowTime() }];
             saveChatHistories();
-            const chatsList = document.getElementById('chats-list');
-            const initials = name.slice(0, 2).toUpperCase();
-            chatsList.insertAdjacentHTML('beforeend', `
+            document.getElementById('chats-list').insertAdjacentHTML('beforeend', `
                 <div onclick="openChat('${cid}', '${name}', false, null, null)" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 46px; height: 46px; border-radius: 12px; background: var(--accent-bg); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--accent-light); font-family: monospace; font-weight: bold;">${initials}</div>
+                        <div style="width: 46px; height: 46px; border-radius: 12px; background: var(--accent-bg); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--accent-light); font-family: monospace; font-weight: bold;">${name.slice(0,2).toUpperCase()}</div>
                         <div>
                             <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${name}</div>
-                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 3px;">Защищенный публичный канал</div>
+                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 3px;">Публичный канал</div>
                         </div>
                     </div>
                     <span style="font-size: 10px; color: #34d399; font-family: monospace; font-weight: bold;">CHANNEL</span>
                 </div>
             `);
             closeCreateChannelModal();
-            showToast('Канал создан: ' + name);
+            showToast('Канал создан');
         }
 
-        function openStoryModal() {
-            document.getElementById('story-text-input').value = '';
-            document.getElementById('story-modal').classList.remove('hidden-view');
-        }
-        function closeStoryModal() {
-            document.getElementById('story-modal').classList.add('hidden-view');
-        }
+        function openStoryModal() { document.getElementById('story-modal').classList.remove('hidden-view'); }
+        function closeStoryModal() { document.getElementById('story-modal').classList.add('hidden-view'); }
         function publishStorySubmit() {
             const text = document.getElementById('story-text-input').value.trim();
             if (!text) return;
-            const strip = document.getElementById('stories-strip');
-            const safeText = text.replace(/'/g, "\\'");
-            strip.insertAdjacentHTML('beforeend', `
-                <div onclick="viewStory('${myCallsign}', '${safeText}')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
+            document.getElementById('stories-strip').insertAdjacentHTML('beforeend', `
+                <div onclick="viewStory('${myCallsign}', '${text.replace(/'/g, "\\'")}')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                     <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, var(--accent), #f59e0b); display: flex; align-items: center; justify-content: center;">
                         <div style="width: 100%; height: 100%; background: #121216; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--accent-light); font-family: monospace;">ME</div>
                     </div>
@@ -1502,11 +1295,8 @@
             document.getElementById('view-story-content').innerText = content;
             document.getElementById('view-story-modal').classList.remove('hidden-view');
         }
-        function closeViewStoryModal() {
-            document.getElementById('view-story-modal').classList.add('hidden-view');
-        }
+        function closeViewStoryModal() { document.getElementById('view-story-modal').classList.add('hidden-view'); }
 
-        // --- ЧАТ И ИИ ---
         function getNowTime() {
             const d = new Date();
             return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -1520,22 +1310,33 @@
 
             const actualTitle = (peerTarget && knownPeers[peerTarget]) ? knownPeers[peerTarget] : title;
             document.getElementById('active-chat-title').innerText = actualTitle;
-            document.getElementById('active-chat-status').innerText = isAi
-                ? (type === 'deepseek' ? 'DeepSeek Neural • Online' : 'Astra Free • Unlimited')
-                : (peerTarget ? 'P2P Канал • Код: ' + peerTarget : 'E2EE Защищено');
+            document.getElementById('active-chat-status').innerText = isAi ? 'AI Assistant • Unlimited' : (peerTarget ? 'P2P Канал • Код: ' + peerTarget : 'Защищено');
 
             if (!chatHistories[chatId]) {
-                chatHistories[chatId] = [
-                    { id: 'o_' + Date.now(), sender: 'them', author: actualTitle.toUpperCase(), text: 'Канал связи открыт.', time: getNowTime() }
-                ];
+                chatHistories[chatId] = [{ id: 'o_' + Date.now(), sender: 'them', author: actualTitle.toUpperCase(), text: 'Канал связи открыт.', time: getNowTime() }];
             }
             renderMessages(chatId);
             document.getElementById('view-active-chat').classList.remove('hidden-view');
             lucide.createIcons();
         }
 
-        function closeChat() {
-            document.getElementById('view-active-chat').classList.add('hidden-view');
+        function closeChat() { document.getElementById('view-active-chat').classList.add('hidden-view'); }
+
+        // --- Функция удаления переписки ---
+        function openDeleteChatModal() {
+            document.getElementById('delete-chat-modal').classList.remove('hidden-view');
+        }
+        function closeDeleteChatModal() {
+            document.getElementById('delete-chat-modal').classList.add('hidden-view');
+        }
+        function confirmDeleteChat() {
+            if (currentChatId) {
+                chatHistories[currentChatId] = [];
+                saveChatHistories();
+                renderMessages(currentChatId);
+                showToast('Переписка очищена');
+            }
+            closeDeleteChatModal();
         }
 
         function renderMessages(chatId) {
@@ -1543,28 +1344,22 @@
             const list = chatHistories[chatId] || [];
             container.innerHTML = list.map((m, idx) => {
                 const isMe = m.sender === 'me';
-                const checkMark = (isMe && currentPeerTarget)
-                    ? (m.delivered ? ' ✓✓ Доставлено' : ' ✓ Отправлено')
-                    : '';
+                const checkMark = (isMe && currentPeerTarget) ? (m.delivered ? ' ✓✓ Доставлено' : ' ✓ Отправлено') : '';
 
-                // 1. Отрисовка видео-кружка как в Telegram
                 if (m.mediaType === 'video_note' && m.mediaUrl) {
                     const vidId = 'vnote_play_' + idx;
                     return `
                         <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; gap: 4px;">
                             ${!isMe ? `<span style="font-size: 10px; font-family: monospace; color: var(--accent-light); font-weight: bold; margin-left: 8px;">${m.author || 'ДРУГ'}</span>` : ''}
                             <div class="video-note-bubble" onclick="togglePlayVideoNote('${vidId}')">
-                                <video id="${vidId}" src="${m.mediaUrl}" autoplay loop playsinline></video>
-                                <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-family: monospace; color: #fff; pointer-events: none;">
-                                    🔊 Нажмите
-                                </div>
+                                <video id="${vidId}" src="${m.mediaUrl}" playsinline webkit-playsinline preload="auto"></video>
+                                <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-family: monospace; color: #fff; pointer-events: none;">🔊 Воспр</div>
                             </div>
                             <span style="font-size: 9px; color: #a1a1aa; font-family: monospace;">🎥 Кружок • ${m.time}${checkMark}</span>
                         </div>
                     `;
                 }
 
-                // 2. Отрисовка обычного видео, фото или аудио в сообщении
                 let mediaHtml = '';
                 if (m.mediaUrl) {
                     if (m.mediaType === 'video') {
@@ -1573,6 +1368,8 @@
                         mediaHtml = `<img src="${m.mediaUrl}" style="width: 100%; max-width: 260px; max-height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 6px; display: block;">`;
                     } else if (m.mediaType === 'audio') {
                         mediaHtml = `<audio src="${m.mediaUrl}" controls style="width: 230px; margin-bottom: 6px; display: block;"></audio>`;
+                    } else if (m.mediaType === 'file') {
+                        mediaHtml = `<div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 6px; font-family: monospace; font-size: 12px;">📎 ${m.fileName || 'Файл'} <br><a href="${m.mediaUrl}" download="${m.fileName || 'file'}" style="color: var(--accent-light); text-decoration: underline; font-size: 10px;">Скачать</a></div>`;
                     }
                 }
 
@@ -1607,12 +1404,8 @@
             if (!v) return;
             v.muted = false;
             v.volume = 1.0;
-            if (v.paused) {
-                v.play().catch(() => {});
-            } else {
-                v.currentTime = 0;
-                v.play().catch(() => {});
-            }
+            if (v.paused) v.play().catch(() => {});
+            else { v.currentTime = 0; v.play().catch(() => {}); }
         }
 
         function sendQuickEmoji(emoji) {
@@ -1620,19 +1413,11 @@
             handleSendMessageButton();
         }
 
-        // =========================================================================
-        // ЗАПИСЬ НАСТОЯЩЕГО ВИДЕО-КРУЖКА (КАК В TELEGRAM)
-        // =========================================================================
+        // --- Запись видео-кружка (исправлен черный экран) ---
         function getSupportedVideoMime() {
-            const types = [
-                'video/webm;codecs=vp8,opus',
-                'video/webm',
-                'video/mp4'
-            ];
+            const types = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
             for (const t of types) {
-                if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
-                    return t;
-                }
+                if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
             }
             return '';
         }
@@ -1644,12 +1429,13 @@
                     audio: true
                 });
             } catch (e) {
-                showToast('Разрешите доступ к камере и микрофону для записи кружка!');
+                showToast('Разрешите доступ к камере и микрофону!');
                 return;
             }
 
             const preview = document.getElementById('vnote-preview');
             preview.srcObject = vnoteStream;
+            preview.muted = true;
             preview.play().catch(() => {});
 
             vnoteChunks = [];
@@ -1659,44 +1445,29 @@
             lucide.createIcons();
 
             const mime = getSupportedVideoMime();
-            const options = mime
-                ? { mimeType: mime, videoBitsPerSecond: 180000, audioBitsPerSecond: 32000 }
-                : { videoBitsPerSecond: 180000, audioBitsPerSecond: 32000 };
-
             try {
-                vnoteRecorder = new MediaRecorder(vnoteStream, options);
+                vnoteRecorder = new MediaRecorder(vnoteStream, mime ? { mimeType: mime } : {});
             } catch (e) {
                 vnoteRecorder = new MediaRecorder(vnoteStream);
             }
 
             vnoteRecorder.ondataavailable = (ev) => {
-                if (ev.data && ev.data.size > 0) {
-                    vnoteChunks.push(ev.data);
-                }
+                if (ev.data && ev.data.size > 0) vnoteChunks.push(ev.data);
             };
 
-            vnoteRecorder.start(250);
+            vnoteRecorder.start(200);
 
             if (vnoteTimerInterval) clearInterval(vnoteTimerInterval);
             vnoteTimerInterval = setInterval(() => {
                 vnoteSeconds++;
-                const secStr = String(vnoteSeconds).padStart(2, '0');
-                document.getElementById('vnote-timer').innerText = '00:' + secStr + ' / 00:12';
-                if (vnoteSeconds >= 12) {
-                    finishAndSendVideoNote();
-                }
+                document.getElementById('vnote-timer').innerText = '00:' + String(vnoteSeconds).padStart(2, '0') + ' / 00:12';
+                if (vnoteSeconds >= 12) finishAndSendVideoNote();
             }, 1000);
         }
 
         function stopVnoteHardware() {
-            if (vnoteTimerInterval) {
-                clearInterval(vnoteTimerInterval);
-                vnoteTimerInterval = null;
-            }
-            if (vnoteStream) {
-                vnoteStream.getTracks().forEach(t => t.stop());
-                vnoteStream = null;
-            }
+            if (vnoteTimerInterval) { clearInterval(vnoteTimerInterval); vnoteTimerInterval = null; }
+            if (vnoteStream) { vnoteStream.getTracks().forEach(t => t.stop()); vnoteStream = null; }
         }
 
         function cancelVideoNote() {
@@ -1713,23 +1484,20 @@
             document.getElementById('video-note-modal').classList.add('hidden-view');
 
             vnoteRecorder.onstop = () => {
-                const mimeType = vnoteRecorder.mimeType || 'video/mp4';
+                const mimeType = vnoteRecorder.mimeType || 'video/webm';
                 const blob = new Blob(vnoteChunks, { type: mimeType });
                 stopVnoteHardware();
 
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    const base64Video = reader.result;
-                    sendMediaMessage('video_note', base64Video, 'video-note.mp4', '');
+                    sendMediaMessage('video_note', reader.result, 'vnote.webm', '');
                 };
                 reader.readAsDataURL(blob);
             };
 
             if (vnoteRecorder.state !== 'inactive') {
                 try { vnoteRecorder.stop(); } catch (e) {}
-            } else {
-                vnoteRecorder.onstop();
-            }
+            } else { vnoteRecorder.onstop(); }
         }
 
         function triggerAttachFile() {
@@ -1740,9 +1508,8 @@
         function handleFileSelected(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             if (file.size > 4.5 * 1024 * 1024) {
-                showToast('Файл слишком большой (макс. 4.5 МБ для быстрой P2P-передачи)');
+                showToast('Файл слишком большой (макс. 4.5 МБ)');
                 return;
             }
 
@@ -1751,10 +1518,10 @@
             else if (file.type.startsWith('image/')) mediaType = 'image';
             else if (file.type.startsWith('audio/')) mediaType = 'audio';
 
-            showToast('Подготовка медиафайла...');
+            showToast('Загрузка файла...');
             const reader = new FileReader();
             reader.onloadend = () => {
-                sendMediaMessage(mediaType, reader.result, file.name, '📎 ' + file.name);
+                sendMediaMessage(mediaType, reader.result, file.name, mediaType === 'file' ? ('📎 ' + file.name) : '');
             };
             reader.readAsDataURL(file);
         }
@@ -1778,7 +1545,7 @@
             renderMessages(activeId);
 
             if (currentPeerTarget) {
-                showToast('📤 Отправка медиафайла другу...');
+                showToast('📤 Отправка другу...');
                 sendPacketToPeer(currentPeerTarget, {
                     type: 'chat',
                     from: myPeerId,
@@ -1792,52 +1559,37 @@
             }
         }
 
-        // =========================================================================
-        // 4. АУДИО И ВИДЕОЗВОНКИ WEBRTC (С ПОЛНЫМ ЗВУКОМ И ВИДЕО СОБЕСЕДНИКА)
-        // =========================================================================
+        // --- WebRTC Звонки (исправлен звук) ---
         async function acquireMediaStream(withVideo) {
             try {
-                return await navigator.mediaDevices.getUserMedia({
+                const s = await navigator.mediaDevices.getUserMedia({
                     video: withVideo ? { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 640 } } : false,
                     audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
                 });
+                s.getAudioTracks().forEach(t => t.enabled = true);
+                return s;
             } catch (e) {
                 try {
-                    return await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-                } catch (e2) {
-                    return null;
-                }
+                    const s2 = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+                    s2.getAudioTracks().forEach(t => t.enabled = true);
+                    return s2;
+                } catch (e2) { return null; }
             }
         }
 
-        // Разблокировка динамика на iOS Safari / Android Chrome при нажатии кнопки
         function unlockMediaElementsOnUserGesture() {
             const rv = document.getElementById('remote-video');
             const ra = document.getElementById('remote-audio');
-            if (rv) {
-                rv.muted = false;
-                rv.volume = 1.0;
-            }
-            if (ra) {
-                ra.muted = false;
-                ra.volume = 1.0;
-            }
+            if (rv) { rv.muted = false; rv.volume = 1.0; rv.play().catch(() => {}); }
+            if (ra) { ra.muted = false; ra.volume = 1.0; ra.play().catch(() => {}); }
         }
 
         function forceEnableCallAudio() {
             const rv = document.getElementById('remote-video');
             const ra = document.getElementById('remote-audio');
-            if (rv && rv.srcObject) {
-                rv.muted = false;
-                rv.volume = 1.0;
-                rv.play().catch(() => {});
-            }
-            if (ra && ra.srcObject) {
-                ra.muted = false;
-                ra.volume = 1.0;
-                ra.play().catch(() => {});
-            }
-            showToast('🔊 Динамик и видеопоток активированы!');
+            if (rv) { rv.muted = false; rv.volume = 1.0; rv.play().catch(() => {}); }
+            if (ra) { ra.muted = false; ra.volume = 1.0; ra.play().catch(() => {}); }
+            showToast('🔊 Звук включен!');
         }
 
         function toggleMuteMic() {
@@ -1845,122 +1597,11 @@
             isMicMuted = !isMicMuted;
             localStream.getAudioTracks().forEach(t => { t.enabled = !isMicMuted; });
             const btn = document.getElementById('mute-mic-btn');
-            if (btn) {
-                btn.innerText = isMicMuted ? '🔇 Микрофон ВЫКЛ' : '🎙️ Микрофон';
-            }
-        }
-
-        async function startCall(withVideo) {
-            unlockMediaElementsOnUserGesture();
-            isCurrentCallVideo = withVideo;
-            isMicMuted = false;
-            const targetName = currentPeerTarget ? (knownPeers[currentPeerTarget] || currentPeerTarget) : 'Тестовый канал';
-            document.getElementById('call-modal-title').innerText = withVideo ? 'Видеовызов P2P' : 'Аудиовызов P2P';
-            document.getElementById('call-modal-status').innerText = currentPeerTarget
-                ? 'Вызов ' + targetName + ' (' + currentPeerTarget + ')...'
-                : 'Защищенный тестовый канал активен';
-            document.getElementById('call-modal').classList.remove('hidden-view');
-            document.getElementById('video-wrapper').style.display = withVideo ? 'block' : 'none';
-            document.getElementById('remote-video-placeholder').style.display = withVideo ? 'flex' : 'none';
-
-            localStream = await acquireMediaStream(withVideo);
-            if (localStream && withVideo) {
-                const lv = document.getElementById('local-video');
-                lv.srcObject = localStream;
-                lv.muted = true;
-                lv.play().catch(() => {});
-            }
-
-            if (currentPeerTarget) {
-                activeCallPeer = currentPeerTarget;
-                // Заранее создаем WebRTC Offer и вшиваем его в вызов, чтобы соединение поднималось мгновенно
-                const pc = createPeerConnection(activeCallPeer);
-                let initialOfferSdp = null;
-                try {
-                    const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: withVideo });
-                    await pc.setLocalDescription(offer);
-                    await waitIceGathering(pc, 1200);
-                    initialOfferSdp = pc.localDescription;
-                } catch (e) {}
-
-                const sendInvite = () => {
-                    if (!activeCallPeer) return;
-                    sendPacketToPeer(activeCallPeer, {
-                        type: 'call_invite',
-                        from: myPeerId,
-                        callsign: myCallsign,
-                        withVideo: withVideo,
-                        offerSdp: initialOfferSdp
-                    });
-                };
-                sendInvite();
-
-                if (callInviteInterval) clearInterval(callInviteInterval);
-                let attempts = 0;
-                callInviteInterval = setInterval(() => {
-                    attempts++;
-                    if (attempts > 5 || !activeCallPeer) {
-                        clearInterval(callInviteInterval);
-                        callInviteInterval = null;
-                        return;
-                    }
-                    sendInvite();
-                }, 3000);
-            }
-        }
-
-        async function acceptIncomingCall() {
-            unlockMediaElementsOnUserGesture();
-            document.getElementById('incoming-call-modal').classList.add('hidden-view');
-            if (!pendingCallFrom) return;
-
-            activeCallPeer = pendingCallFrom;
-            isCurrentCallVideo = pendingCallWithVideo;
-            isMicMuted = false;
-
-            document.getElementById('call-modal-title').innerText = isCurrentCallVideo ? 'Видеовызов P2P' : 'Аудиовызов P2P';
-            document.getElementById('call-modal-status').innerText = 'Установка SRTP медиа-потока...';
-            document.getElementById('call-modal').classList.remove('hidden-view');
-            document.getElementById('video-wrapper').style.display = isCurrentCallVideo ? 'block' : 'none';
-            document.getElementById('remote-video-placeholder').style.display = isCurrentCallVideo ? 'flex' : 'none';
-
-            localStream = await acquireMediaStream(isCurrentCallVideo);
-            if (localStream && isCurrentCallVideo) {
-                const lv = document.getElementById('local-video');
-                lv.srcObject = localStream;
-                lv.muted = true;
-                lv.play().catch(() => {});
-            }
-
-            if (pendingRemoteOfferSdp) {
-                const offerToProcess = pendingRemoteOfferSdp;
-                pendingRemoteOfferSdp = null;
-                await handleWebRTCOffer(activeCallPeer, offerToProcess);
-            } else {
-                sendPacketToPeer(activeCallPeer, {
-                    type: 'call_accepted',
-                    from: myPeerId,
-                    callsign: myCallsign
-                });
-            }
-        }
-
-        function declineIncomingCall() {
-            document.getElementById('incoming-call-modal').classList.add('hidden-view');
-            pendingRemoteOfferSdp = null;
-            if (pendingCallFrom) {
-                sendPacketToPeer(pendingCallFrom, {
-                    type: 'call_declined',
-                    from: myPeerId
-                });
-                pendingCallFrom = null;
-            }
+            if (btn) btn.innerText = isMicMuted ? '🔇 Микрофон ВЫКЛ' : '🎙️ Микрофон';
         }
 
         function createPeerConnection(peerId) {
-            if (rtcPeerConnection) {
-                try { rtcPeerConnection.close(); } catch (e) {}
-            }
+            if (rtcPeerConnection) { try { rtcPeerConnection.close(); } catch (e) {} }
             pendingIceCandidates = [];
             remoteMediaStream = new MediaStream();
             const pc = new RTCPeerConnection(rtcConfig);
@@ -1971,19 +1612,17 @@
 
             pc.onicecandidate = (event) => {
                 if (event.candidate) {
-                    sendPacketToPeer(peerId, {
-                        type: 'webrtc_ice',
-                        from: myPeerId,
-                        candidate: event.candidate
-                    });
+                    sendPacketToPeer(peerId, { type: 'webrtc_ice', from: myPeerId, candidate: event.candidate });
                 }
             };
 
             pc.ontrack = (event) => {
                 if (event.streams && event.streams[0]) {
-                    event.streams[0].getTracks().forEach(t => remoteMediaStream.addTrack(t));
+                    event.streams[0].getTracks().forEach(t => {
+                        if (!remoteMediaStream.getTracks().includes(t)) remoteMediaStream.addTrack(t);
+                    });
                 } else if (event.track) {
-                    remoteMediaStream.addTrack(event.track);
+                    if (!remoteMediaStream.getTracks().includes(event.track)) remoteMediaStream.addTrack(event.track);
                 }
 
                 const rv = document.getElementById('remote-video');
@@ -2002,15 +1641,8 @@
                     ra.volume = 1.0;
                     ra.play().catch(() => {});
                 }
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Звук и видео активны';
-            };
-
-            pc.oniceconnectionstatechange = () => {
-                const st = pc.iceConnectionState;
-                if (st === 'connected' || st === 'completed') {
-                    document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
-                    forceEnableCallAudio();
-                }
+                document.getElementById('call-modal-status').innerText = '🔒 Соединение установлено • Аудио и видео активны';
+                forceEnableCallAudio();
             };
 
             rtcPeerConnection = pc;
@@ -2019,16 +1651,10 @@
 
         function waitIceGathering(pc, timeoutMs) {
             return new Promise((resolve) => {
-                if (pc.iceGatheringState === 'complete') {
-                    resolve();
-                    return;
-                }
+                if (pc.iceGatheringState === 'complete') { resolve(); return; }
                 const timer = setTimeout(resolve, timeoutMs || 1400);
                 pc.addEventListener('icegatheringstatechange', () => {
-                    if (pc.iceGatheringState === 'complete') {
-                        clearTimeout(timer);
-                        resolve();
-                    }
+                    if (pc.iceGatheringState === 'complete') { clearTimeout(timer); resolve(); }
                 });
             });
         }
@@ -2037,9 +1663,7 @@
             if (!rtcPeerConnection || !rtcPeerConnection.remoteDescription) return;
             while (pendingIceCandidates.length > 0) {
                 const c = pendingIceCandidates.shift();
-                try {
-                    await rtcPeerConnection.addIceCandidate(new RTCIceCandidate(c));
-                } catch (e) {}
+                try { await rtcPeerConnection.addIceCandidate(new RTCIceCandidate(c)); } catch (e) {}
             }
         }
 
@@ -2049,11 +1673,7 @@
                 const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: isCurrentCallVideo });
                 await pc.setLocalDescription(offer);
                 await waitIceGathering(pc, 1400);
-                sendPacketToPeer(peerId, {
-                    type: 'webrtc_offer',
-                    from: myPeerId,
-                    sdp: pc.localDescription
-                });
+                sendPacketToPeer(peerId, { type: 'webrtc_offer', from: myPeerId, sdp: pc.localDescription });
             } catch (e) {}
         }
 
@@ -2065,18 +1685,9 @@
                 const answer = await pc.createAnswer();
                 await pc.setLocalDescription(answer);
                 await waitIceGathering(pc, 1200);
-                sendPacketToPeer(peerId, {
-                    type: 'call_accepted',
-                    from: myPeerId,
-                    callsign: myCallsign,
-                    answerSdp: pc.localDescription
-                });
-                sendPacketToPeer(peerId, {
-                    type: 'webrtc_answer',
-                    from: myPeerId,
-                    sdp: pc.localDescription
-                });
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+                sendPacketToPeer(peerId, { type: 'call_accepted', from: myPeerId, callsign: myCallsign, answerSdp: pc.localDescription });
+                sendPacketToPeer(peerId, { type: 'webrtc_answer', from: myPeerId, sdp: pc.localDescription });
+                document.getElementById('call-modal-status').innerText = '🔒 На связи • SRTP Шифрование';
             } catch (e) {}
         }
 
@@ -2085,7 +1696,7 @@
             try {
                 await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
                 await flushPendingIce();
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+                document.getElementById('call-modal-status').innerText = '🔒 На связи • SRTP Шифрование';
             } catch (e) {}
         }
 
@@ -2095,33 +1706,19 @@
                 pendingIceCandidates.push(candidate);
                 return;
             }
-            try {
-                await rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-            } catch (e) {}
+            try { await rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidate)); } catch (e) {}
         }
 
         function endActiveCall(notifyPeer) {
-            if (callInviteInterval) {
-                clearInterval(callInviteInterval);
-                callInviteInterval = null;
-            }
+            if (callInviteInterval) { clearInterval(callInviteInterval); callInviteInterval = null; }
             if (notifyPeer && activeCallPeer) {
-                sendPacketToPeer(activeCallPeer, {
-                    type: 'call_hangup',
-                    from: myPeerId
-                });
+                sendPacketToPeer(activeCallPeer, { type: 'call_hangup', from: myPeerId });
             }
             activeCallPeer = null;
             pendingCallFrom = null;
             pendingRemoteOfferSdp = null;
-            if (rtcPeerConnection) {
-                try { rtcPeerConnection.close(); } catch (e) {}
-                rtcPeerConnection = null;
-            }
-            if (localStream) {
-                localStream.getTracks().forEach(t => t.stop());
-                localStream = null;
-            }
+            if (rtcPeerConnection) { try { rtcPeerConnection.close(); } catch (e) {} rtcPeerConnection = null; }
+            if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
             const rv = document.getElementById('remote-video');
             const lv = document.getElementById('local-video');
             const ra = document.getElementById('remote-audio');
@@ -2131,20 +1728,88 @@
             document.getElementById('call-modal').classList.add('hidden-view');
         }
 
-        // --- БУНКЕР ---
-        function openNukeModal() {
-            document.getElementById('nuke-modal').classList.remove('hidden-view');
-        }
-        function closeNukeModal() {
-            document.getElementById('nuke-modal').classList.add('hidden-view');
-        }
+        function openNukeModal() { document.getElementById('nuke-modal').classList.remove('hidden-view'); }
+        function closeNukeModal() { document.getElementById('nuke-modal').classList.add('hidden-view'); }
         function confirmNukeData() {
-            Object.keys(chatHistories).forEach(k => {
-                chatHistories[k] = [];
-            });
+            Object.keys(chatHistories).forEach(k => { chatHistories[k] = []; });
             localStorage.clear();
             closeNukeModal();
-            showToast('Все данные сеанса уничтожены');
+            showToast('Все данные стерты');
+        }
+
+        async function handleSendMessageButton() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const activeId = currentChatId;
+            if (!chatHistories[activeId]) chatHistories[activeId] = [];
+
+            const chatMsgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+            chatHistories[activeId].push({
+                id: chatMsgId,
+                sender: 'me',
+                text: text,
+                time: getNowTime(),
+                delivered: false
+            });
+            saveChatHistories();
+            renderMessages(activeId);
+            input.value = '';
+
+            if (isAiChat) {
+                const loadingId = 'loading-' + Date.now();
+                const container = document.getElementById('chat-messages');
+                container.insertAdjacentHTML('beforeend', `
+                    <div id="${loadingId}" style="display: flex; justify-content: flex-start;">
+                        <div style="padding: 14px; border-radius: 16px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; font-family: monospace; font-size: 12px;">
+                            ${aiType === 'deepseek' ? 'DeepSeek думает...' : 'ChatGPT Astra обрабатывает...'}
+                        </div>
+                    </div>
+                `);
+                container.scrollTop = container.scrollHeight;
+
+                try {
+                    const systemPrompt = aiType === 'deepseek'
+                        ? "You are DeepSeek AI. Provide deep, analytical, technical, and precise answers."
+                        : "You are ChatGPT Astra, an advanced free AI assistant. Be direct, helpful, and clear.";
+
+                    const payload = {
+                        contents: [{ role: "user", parts: [{ text: text }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    };
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    const aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Не удалось получить ответ.";
+
+                    document.getElementById(loadingId).remove();
+                    chatHistories[activeId].push({
+                        id: 'ai_' + Date.now(),
+                        sender: 'them',
+                        author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
+                        text: aiResponseText,
+                        time: getNowTime()
+                    });
+                    saveChatHistories();
+                    renderMessages(activeId);
+                } catch (err) {
+                    document.getElementById(loadingId).remove();
+                    showToast('Ошибка ИИ-запроса');
+                }
+            } else if (currentPeerTarget) {
+                sendPacketToPeer(currentPeerTarget, {
+                    type: 'chat',
+                    from: myPeerId,
+                    callsign: myCallsign,
+                    text: text,
+                    chatMsgId: chatMsgId
+                });
+            }
         }
     </script>
 </body>
