@@ -365,10 +365,10 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: ДРУЗЬЯ И P2P СЕТЬ -->
+        <!-- ВКЛАДКА 2: ДРУЗЬЯ И СЕТЬ РЕТРАНСЛЯТОРОВ -->
         <div id="view-friends" class="view-content hidden-view" style="padding: 16px; overflow-y: auto; gap: 16px;">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                <h2 style="font-size: 13px; font-weight: bold; color: var(--accent); font-family: monospace; text-transform: uppercase; letter-spacing: 1px;">КОНТАКТЫ & P2P СЕТЬ</h2>
+                <h2 style="font-size: 13px; font-weight: bold; color: var(--accent); font-family: monospace; text-transform: uppercase; letter-spacing: 1px;">КОНТАКТЫ & СЕТЬ РЕТРАНСЛЯТОРОВ</h2>
                 <button onclick="openConnectFriendModal()" class="gp-button" style="padding: 10px 14px;">
                     <i data-lucide="user-plus" style="width: 15px; height: 15px;"></i> Подключиться к другу
                 </button>
@@ -407,7 +407,7 @@
             </div>
             <div>
                 <h2 style="font-size: 18px; font-weight: bold; color: #f4f4f5; font-family: monospace; text-transform: uppercase; margin-bottom: 8px;">Бункер Самоуничтожения</h2>
-                <p style="font-size: 12px; color: #a1a1aa; max-width: 290px; line-height: 1.5;">Полное стирание всех кэш-файлов, истории переписок и крипто-ключей из памяти устройства.</p>
+                <p style="font-size: 12px; color: #a1a1aa; max-width: 290px; line-height: 1.5;">Полное стирание локальной истории, контактов и сохранённых медиа из памяти устройства.</p>
             </div>
             <button onclick="openNukeModal()" class="gp-button" style="width: 100%; max-width: 280px; padding: 14px;">
                 УНИЧТОЖИТЬ ВСЕ ДАННЫЕ
@@ -456,9 +456,9 @@
             </div>
 
             <div class="gp-card" style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-weight: bold; font-size: 12px; color: #34d399; font-family: monospace; text-transform: uppercase;">Мульти-Мост Порт-443 (WSS + HTTPS)</div>
+                <div style="font-weight: bold; font-size: 12px; color: #34d399; font-family: monospace; text-transform: uppercase;">Передача WSS / HTTPS</div>
                 <div style="font-size: 12px; color: #a1a1aa; line-height: 1.5;">
-                    Встроенное авто-сжатие медиафайлов и гибридный ретранслятор голоса/видео через Порт-443 (работает даже через VPN + 4G).
+                    Сжатие изображений, подтверждение получения и повторная передача. Публичные ретрансляторы могут быть недоступны или ограничивать трафик. Сквозного шифрования нет. Для приватных данных не используйте.
                 </div>
             </div>
         </div>
@@ -472,7 +472,7 @@
                     </button>
                     <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                         <div id="active-chat-title" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">ChatGPT Astra</div>
-                        <div id="active-chat-status" style="font-size: 10px; color: #34d399; font-family: monospace;">Online • Защищено</div>
+                        <div id="active-chat-status" style="font-size: 10px; color: #34d399; font-family: monospace;">Онлайн</div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
@@ -604,7 +604,7 @@
     <!-- МОДАЛКА 3: Создание канала -->
     <div id="create-channel-modal" class="modal-overlay hidden-view">
         <div class="modal-box">
-            <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Новый зашифрованный канал</h3>
+            <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Новый локальный канал</h3>
             <input type="text" id="new-channel-name" placeholder="Название канала..." class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="createChannelSubmit()" class="gp-button" style="flex: 1;">Создать</button>
@@ -641,7 +641,7 @@
                 <i data-lucide="phone-incoming" style="width: 32px; height: 32px;"></i>
             </div>
             <h3 id="incoming-caller-name" style="font-weight: bold; font-size: 16px; color: #f4f4f5; font-family: monospace;">ВХОДЯЩИЙ ВЫЗОВ</h3>
-            <p id="incoming-call-type" style="font-size: 12px; color: #34d399; font-family: monospace;">Защищенный P2P Вызов...</p>
+            <p id="incoming-call-type" style="font-size: 12px; color: #34d399; font-family: monospace;">Вызов через ретранслятор...</p>
             <div style="display: flex; gap: 10px; margin-top: 6px;">
                 <button onclick="acceptIncomingCall()" class="gp-button" style="flex: 1; background: #059669; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); padding: 14px;">Принять</button>
                 <button onclick="declineIncomingCall()" class="gp-button" style="flex: 1; background: #dc2626; padding: 14px;">Отклонить</button>
@@ -652,7 +652,7 @@
     <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
     <div id="call-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="max-width: 360px;">
-            <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный вызов</h3>
+            <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Аудио / видеовызов</h3>
             <p id="call-modal-status" style="font-size: 11px; color: #34d399; font-family: monospace;">Вызов абонента...</p>
             <div id="video-wrapper" style="display: none; position: relative; width: 100%; height: 270px; background: #050505; border-radius: 14px; overflow: hidden; border: 1px solid var(--accent-border);">
                 <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
@@ -714,10 +714,11 @@
         let currentPeerTarget = null;
         let lastToastPeer = null;
 
-        const mediaBlobUrlCache = {};
+        const mediaBlobUrlCache = Object.create(null);
 
-        let knownPeers = JSON.parse(localStorage.getItem('gp_known_peers') || '{}');
-        const chatHistories = JSON.parse(localStorage.getItem('gp_chat_histories') || 'null') || {
+        let knownPeers = Object.assign(Object.create(null), safeStoredJson('gp_known_peers', {}));
+        for (const key of Object.keys(knownPeers)) if (!/^ghost-\d{4}$/.test(key) || typeof knownPeers[key] !== 'string') delete knownPeers[key];
+        const chatHistories = safeStoredJson('gp_chat_histories', null) || {
             'astra': [
                 { id: 'init1', sender: 'them', author: 'CHATGPT ASTRA', text: 'Квантовый шлюз активен. Я ChatGPT Astra — задавайте любой вопрос, ограничений нет.', time: '12:00' }
             ],
@@ -727,18 +728,28 @@
         };
 
         function saveChatHistories() {
-            try {
-                const slimCopy = {};
-                Object.keys(chatHistories).forEach(k => {
-                    slimCopy[k] = (chatHistories[k] || []).map(m => {
-                        if (m.mediaUrl && m.mediaUrl.length > 95000) {
-                            return { ...m, mediaUrl: null, text: m.text || '🎬 [Медиафайл сеанса]' };
+            const snapshot = JSON.parse(JSON.stringify(chatHistories));
+            const task = historyWriteQueue.catch(() => {}).then(async () => {
+                if (isWiping) return;
+                const slim = Object.create(null);
+                const media = [];
+                for (const [chatId, list] of Object.entries(snapshot)) {
+                    slim[chatId] = list.map(m => {
+                        const copy = {...m};
+                        if (m.mediaUrl && m.mediaUrl.startsWith('data:')) {
+                            copy.mediaRef = chatId + ':' + m.id;
+                            media.push({key:copy.mediaRef, value:m.mediaUrl});
+                            delete copy.mediaUrl;
                         }
-                        return m;
+                        return copy;
                     });
-                });
-                localStorage.setItem('gp_chat_histories', JSON.stringify(slimCopy));
-            } catch (e) {}
+                }
+                if (media.length) await mediaStoreWrite(media);
+                localStorage.setItem('gp_chat_histories', JSON.stringify(slim));
+            });
+            historyWriteQueue = task;
+            task.catch(e => { console.error('Сохранение истории', e); showToast('Не удалось сохранить историю: ' + e.message); });
+            return task;
         }
 
         function getPlayableMediaUrl(msgId, dataUrl) {
@@ -809,7 +820,8 @@
             ]
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            await hydrateMedia();
             updateIdentityUI();
             setTheme(currentTheme);
             restoreSavedContacts();
@@ -865,41 +877,34 @@
 
         function handleRawNetworkJson(jsonStr) {
             try {
+                if (typeof jsonStr !== 'string' || jsonStr.length > MAX_PACKET_CHARS) return;
                 const pkt = JSON.parse(jsonStr);
-                if (!pkt) return;
-
-                if (pkt.type === '__pkt_chunk') {
-                    const chunkKey = pkt.transferId + '_' + pkt.idx;
-                    if (processedMsgIds.has(chunkKey)) return;
-                    processedMsgIds.add(chunkKey);
-
-                    if (!incomingChunkBuffers[pkt.transferId]) {
-                        incomingChunkBuffers[pkt.transferId] = {
-                            parts: new Array(pkt.total),
-                            received: 0,
-                            total: pkt.total
-                        };
-                    }
-                    const buf = incomingChunkBuffers[pkt.transferId];
-                    if (!buf.parts[pkt.idx]) {
-                        buf.parts[pkt.idx] = pkt.data;
-                        buf.received++;
-                    }
-                    if (buf.received < buf.total) {
-                        const pct = Math.max(1, Math.round((buf.received / buf.total) * 100));
-                        showToast('📥 Прием медиа: ' + pct + '% (' + buf.received + '/' + buf.total + ')');
-                    }
-                    if (buf.received === buf.total) {
-                        const fullJson = buf.parts.join('');
-                        delete incomingChunkBuffers[pkt.transferId];
-                        showToast('✅ Медиафайл успешно получен!');
-                        handleIncomingPacket(JSON.parse(fullJson));
-                    }
-                    return;
+                if (!pkt || !/^ghost-\d{4}$/.test(pkt.from || '') || pkt.from === myPeerId) return;
+                if (pkt.type !== '__pkt_chunk') { handleIncomingPacket(pkt); return; }
+                if (!Number.isInteger(pkt.total) || pkt.total < 1 || pkt.total > 2500 ||
+                    !Number.isInteger(pkt.idx) || pkt.idx < 0 || pkt.idx >= pkt.total ||
+                    typeof pkt.transferId !== 'string' || pkt.transferId.length > 100 ||
+                    typeof pkt.data !== 'string' || !pkt.data.length || pkt.data.length > 12000) return;
+                const key = pkt.from + ':' + pkt.transferId;
+                if (!incomingChunkBuffers[key]) {
+                    if (Object.keys(incomingChunkBuffers).length >= 8) return;
+                    incomingChunkBuffers[key] = {parts:new Array(pkt.total), total:pkt.total,
+                        received:0, size:0, encoding:pkt.encoding || '', updated:Date.now()};
                 }
-
-                handleIncomingPacket(pkt);
-            } catch (e) {}
+                const buf = incomingChunkBuffers[key];
+                if (buf.total !== pkt.total || buf.encoding !== (pkt.encoding || '')) return;
+                if (buf.parts[pkt.idx] !== undefined) return;
+                buf.parts[pkt.idx] = pkt.data; buf.received++; buf.size += pkt.data.length; buf.updated = Date.now();
+                if (buf.size > MAX_PACKET_CHARS * 1.4) { delete incomingChunkBuffers[key]; return; }
+                if (buf.received === buf.total) {
+                    delete incomingChunkBuffers[key];
+                    const joined = buf.parts.join('');
+                    const raw = buf.encoding === 'base64-utf8' ? base64ToUtf8(joined) : joined;
+                    const data = JSON.parse(raw);
+                    if (data.from !== pkt.from) return;
+                    handleIncomingPacket(data);
+                }
+            } catch (e) { console.warn('Некорректный сетевой пакет', e); }
         }
 
         function connectNtfyPort443() {
@@ -919,7 +924,7 @@
                 };
             } catch (e) {}
 
-            if (ntfyWs) { try { ntfyWs.close(); } catch (e) {} }
+            if (ntfyWs) { try { ntfyWs.onclose = null; ntfyWs.close(); } catch (e) {} }
             try {
                 ntfyWs = new WebSocket('wss://ntfy.sh/' + myTopic + '/ws');
                 ntfyWs.onopen = () => setNetworkOnlineBadge();
@@ -1013,56 +1018,67 @@
         function connectSingleMqttBroker(url) {
             try {
                 const ws = new WebSocket(url, 'mqtt');
-                ws.binaryType = 'arraybuffer';
-                ws.brokerUrl = url;
-                ws.onopen = () => {
-                    const cid = 'gp7_' + savedPin + '_' + Math.random().toString(16).slice(2, 7);
-                    ws.send(buildMqttConnectPacket(cid));
-                };
-                ws.onmessage = (evt) => {
-                    const bytes = new Uint8Array(evt.data);
-                    let offset = 0;
-                    while (offset < bytes.length) {
-                        const type = (bytes[offset] >> 4) & 0x0f;
-                        let pos = offset + 1;
-                        let mult = 1;
-                        let rem = 0;
-                        while (pos < bytes.length) {
-                            const b = bytes[pos++];
-                            rem += (b & 0x7f) * mult;
-                            mult *= 128;
-                            if ((b & 0x80) === 0) break;
+                ws.binaryType = 'arraybuffer'; ws.brokerUrl = url;
+                let pending = new Uint8Array(0);
+                ws.onopen = () => ws.send(buildMqttConnectPacket(newId('gp')));
+                ws.onmessage = evt => {
+                    try {
+                        const next = new Uint8Array(evt.data);
+                        if (pending.length + next.length > MAX_PACKET_CHARS * 2) { ws.close(); return; }
+                        const all = new Uint8Array(pending.length + next.length);
+                        all.set(pending); all.set(next, pending.length);
+                        let offset = 0;
+                        while (offset < all.length) {
+                            const type = all[offset] >> 4;
+                            let pos = offset + 1, multiplier = 1, remaining = 0, digits = 0, complete = false;
+                            while (pos < all.length && digits < 4) {
+                                const b = all[pos++]; digits++;
+                                remaining += (b & 127) * multiplier; multiplier *= 128;
+                                if (!(b & 128)) { complete = true; break; }
+                            }
+                            if (!complete) { if (digits === 4) throw new Error('MQTT length'); break; }
+                            const end = pos + remaining;
+                            if (end > all.length) break;
+                            if (type === 2) {
+                                if (remaining !== 2 || all[pos + 1] !== 0) throw new Error('MQTT connection rejected');
+                                ws.send(buildMqttSubscribePacket(getInboxTopic(myPeerId)));
+                            } else if (type === 9) {
+                                if (remaining < 3 || all[pos] !== 0 || all[pos + 1] !== 1 || all[pos + 2] === 128)
+                                    throw new Error('MQTT subscription rejected');
+                                ws.isMqttReady = true; setNetworkOnlineBadge();
+                            } else if (type === 3) {
+                                if (remaining < 2) throw new Error('MQTT packet');
+                                let p = pos;
+                                const topicLength = (all[p] << 8) | all[p + 1]; p += 2;
+                                if (p + topicLength > end) throw new Error('MQTT topic');
+                                const topic = new TextDecoder().decode(all.slice(p, p + topicLength)); p += topicLength;
+                                const qos = (all[offset] >> 1) & 3;
+                                if (qos > 1) throw new Error('Unsupported MQTT QoS');
+                                let packetId;
+                                if (qos === 1) {
+                                    if (p + 2 > end) throw new Error('MQTT packet ID');
+                                    packetId = [all[p], all[p + 1]]; p += 2;
+                                }
+                                if (topic === getInboxTopic(myPeerId))
+                                    handleRawNetworkJson(new TextDecoder().decode(all.slice(p, end)));
+                                if (packetId) ws.send(new Uint8Array([0x40, 0x02, ...packetId]));
+                            }
+                            offset = end;
                         }
-                        const packetEnd = pos + rem;
-                        if (packetEnd > bytes.length) break;
-
-                        if (type === 2) {
-                            setNetworkOnlineBadge();
-                            ws.isMqttReady = true;
-                            ws.send(buildMqttSubscribePacket(getInboxTopic(myPeerId)));
-                        } else if (type === 3) {
-                            let p = pos;
-                            const tLen = (bytes[p] << 8) | bytes[p + 1];
-                            p += 2 + tLen;
-                            const qos = (bytes[offset] >> 1) & 0x03;
-                            if (qos > 0) p += 2;
-                            const payloadBytes = bytes.slice(p, packetEnd);
-                            const jsonStr = new TextDecoder().decode(payloadBytes);
-                            handleRawNetworkJson(jsonStr);
-                        }
-                        offset = packetEnd;
-                    }
+                        pending = all.slice(offset);
+                    } catch (e) { console.warn('MQTT parser', e); ws.close(); }
                 };
                 ws.onclose = () => {
                     ws.isMqttReady = false;
                     setTimeout(() => {
                         const idx = rawMqttSockets.indexOf(ws);
                         if (idx !== -1) rawMqttSockets.splice(idx, 1);
-                        connectSingleMqttBroker(url);
+                        if (!isWiping) connectSingleMqttBroker(url);
                     }, 3000);
                 };
+                ws.onerror = () => console.warn('MQTT недоступен:', url);
                 rawMqttSockets.push(ws);
-            } catch (e) {}
+            } catch (e) { console.warn('MQTT initialization', e); }
         }
 
         setInterval(() => {
@@ -1073,88 +1089,61 @@
             });
         }, 20000);
 
-        async function transmitSingleFrame(targetTopic, frameJson, skipHttp) {
-            const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
-            let mqttSent = false;
-            rawMqttSockets.forEach(ws => {
-                if (ws && ws.readyState === 1 && ws.isMqttReady) {
-                    try { ws.send(mqttPkt); mqttSent = true; } catch (e) {}
-                }
-            });
-
-            if (!skipHttp) {
-                try {
-                    fetch('https://ntfy.sh/' + targetTopic, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-                        body: frameJson
-                    }).then(r => { if (r.ok) setNetworkOnlineBadge(); }).catch(() => {});
-                } catch (e) {}
-            }
-
-            return mqttSent;
-        }
-
-        async function transmitChunkFrame(targetTopic, frameJson, chunkIndex) {
-            const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
-            let sentCount = 0;
-            for (let i = 0; i < rawMqttSockets.length; i++) {
-                const ws = rawMqttSockets[i];
-                if (ws && ws.readyState === 1 && ws.isMqttReady && ws.bufferedAmount < 65536) {
-                    try {
-                        ws.send(mqttPkt);
-                        sentCount++;
-                        if (sentCount >= 2) break;
-                    } catch (e) {}
+        async function transmitSingleFrame(targetTopic, frameJson, skipHttp, forceHttp = false) {
+            let accepted = false;
+            if (!forceHttp) {
+                const packet = buildMqttPublishPacket(targetTopic, frameJson);
+                for (const ws of rawMqttSockets) {
+                    if (ws.readyState === 1 && ws.isMqttReady && ws.bufferedAmount < 262144) {
+                        try { ws.send(packet); accepted = true; }
+                        catch (e) { console.warn('MQTT send', e); }
+                    }
                 }
             }
-
-            if (sentCount === 0) {
-                await fetch('https://ntfy.sh/' + targetTopic, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-                    body: frameJson
-                }).catch(() => {});
-                await new Promise(r => setTimeout(r, 220));
-            }
+            if (accepted) return;
+            if (skipHttp) throw new Error('Нет доступного MQTT для потока звонка');
+            await postHttpFrame(targetTopic, frameJson);
         }
 
-        async function sendPacketToPeer(targetPeerId, packet) {
-            packet.msgId = packet.msgId || (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
-            const targetTopic = getInboxTopic(targetPeerId);
-            const rawJson = JSON.stringify(packet);
+        async function transmitChunkFrame(targetTopic, frameJson, chunkIndex, forceHttp = false) {
+            await transmitSingleFrame(targetTopic, frameJson, false, forceHttp);
+        }
 
-            const hasReadyMqtt = rawMqttSockets.some(ws => ws && ws.readyState === 1 && ws.isMqttReady);
-            const CHUNK_SIZE = hasReadyMqtt ? 7500 : 2500;
-
-            if (rawJson.length <= CHUNK_SIZE) {
-                const isRealtimeStream = (packet.type === 'call_vframe' || packet.type === 'call_aframe');
-                await transmitSingleFrame(targetTopic, rawJson, isRealtimeStream || rawJson.length > 3500);
+        async function sendPacketToPeer(targetPeerId, packet, options = {}) {
+            if (!/^ghost-\d{4}$/.test(targetPeerId)) throw new Error('Некорректный код получателя');
+            if (isWiping) throw new Error('Очистка данных');
+            packet.msgId = packet.msgId || newId('pkt');
+            const topic = getInboxTopic(targetPeerId);
+            const raw = JSON.stringify(packet);
+            if (raw.length > MAX_PACKET_CHARS) throw new Error('Медиа слишком большое');
+            const realtime = packet.type === 'call_vframe' || packet.type === 'call_aframe';
+            const mqtt = !options.forceHttp && rawMqttSockets.some(ws => ws.readyState === 1 && ws.isMqttReady);
+            const chunkSize = mqtt ? 6000 : 1400;
+            if (raw.length <= chunkSize && (mqtt || new TextEncoder().encode(raw).length <= 3500)) {
+                await transmitSingleFrame(topic, raw, realtime, !!options.forceHttp);
                 return;
             }
-
-            const totalChunks = Math.ceil(rawJson.length / CHUNK_SIZE);
-            const transferId = 'tr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-
-            for (let i = 0; i < totalChunks; i++) {
-                const slice = rawJson.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-                const chunkFrame = JSON.stringify({
-                    type: '__pkt_chunk',
-                    from: myPeerId,
-                    transferId: transferId,
-                    idx: i,
-                    total: totalChunks,
-                    data: slice
-                });
-                await transmitChunkFrame(targetTopic, chunkFrame, i);
-                await new Promise(r => setTimeout(r, 85));
+            if (realtime && !mqtt) throw new Error('Поток звонка требует MQTT');
+            const encoded = utf8ToBase64(raw);
+            const total = Math.ceil(encoded.length / chunkSize);
+            const transferId = newId('tr');
+            for (let idx = 0; idx < total; idx++) {
+                if (isWiping) throw new Error('Передача отменена');
+                const frame = JSON.stringify({type:'__pkt_chunk', from:myPeerId,
+                    transferId, idx, total, encoding:'base64-utf8',
+                    data:encoded.slice(idx * chunkSize, (idx + 1) * chunkSize)});
+                // A MQTT-sized frame must never fall back to HTTP without re-chunking.
+                if (mqtt) await transmitSingleFrame(topic, frame, true);
+                else await transmitChunkFrame(topic, frame, idx, true);
+                if (options.onProgress) options.onProgress(idx + 1, total);
+                await delay(mqtt ? 35 : 350);
             }
         }
 
         // =========================================================================
         // 3. ОБРАБОТКА ВХОДЯЩИХ ПАКЕТОВ, МЕДИА, КРУЖКОВ И ЗВОНКОВ
         // =========================================================================
-        function handleIncomingPacket(data) {
+        function handleIncomingPacketLegacy(data) {
             if (!data || !data.from || data.from === myPeerId) return;
             if (data.msgId) {
                 if (processedMsgIds.has(data.msgId)) return;
@@ -1168,7 +1157,7 @@
 
             if (data.type === 'handshake') {
                 registerPeerContactUI(senderId, senderCallsign);
-                sendPacketToPeer(senderId, {
+                sendPacketSafely(senderId, {
                     type: 'handshake_ack',
                     from: myPeerId,
                     callsign: myCallsign
@@ -1199,12 +1188,7 @@
                 });
                 saveChatHistories();
 
-                sendPacketToPeer(senderId, {
-                    type: 'delivery_ack',
-                    from: myPeerId,
-                    callsign: myCallsign,
-                    chatMsgId: msgId
-                });
+
 
                 vibrateDevice([140]);
                 if (currentChatId === senderId && !document.getElementById('view-active-chat').classList.contains('hidden-view')) {
@@ -1241,7 +1225,7 @@
                     pendingRemoteOfferSdp = data.offerSdp;
                 }
 
-                sendPacketToPeer(senderId, {
+                sendPacketSafely(senderId, {
                     type: 'call_ringing',
                     from: myPeerId,
                     callsign: myCallsign
@@ -1249,8 +1233,8 @@
 
                 document.getElementById('incoming-caller-name').innerText = senderCallsign + ' (' + senderId + ')';
                 document.getElementById('incoming-call-type').innerText = pendingCallWithVideo
-                    ? '📹 Входящий защищенный ВИДЕОВЫЗОВ'
-                    : '📞 Входящий защищенный АУДИОВЫЗОВ';
+                    ? '📹 Входящий ВИДЕОВЫЗОВ'
+                    : '📞 Входящий АУДИОВЫЗОВ';
                 document.getElementById('incoming-call-modal').classList.remove('hidden-view');
                 vibrateDevice([300, 150, 300]);
                 safeIcons();
@@ -1269,7 +1253,7 @@
                     callInviteInterval = null;
                 }
                 const st = document.getElementById('call-modal-status');
-                if (st) st.innerText = '🔒 На связи • Аудио и видео поток активен';
+                if (st) st.innerText = 'На связи • Аудио и видео поток активен';
                 startPort443MediaRelay(senderId);
                 if (data.answerSdp && rtcPeerConnection) {
                     handleWebRTCAnswer(data.answerSdp);
@@ -1285,7 +1269,7 @@
                     }
                     if (ph) ph.style.display = 'none';
                     const st = document.getElementById('call-modal-status');
-                    if (st) st.innerText = '🔒 На связи • Видео и звук активны';
+                    if (st) st.innerText = 'На связи • Видео и звук активны';
                 }
             }
             else if (data.type === 'call_aframe') {
@@ -1390,7 +1374,7 @@
                 updateIdentityUI();
                 showToast('Позывной сохранен: ' + myCallsign);
                 Object.keys(knownPeers).forEach(pid => {
-                    sendPacketToPeer(pid, {
+                    sendPacketSafely(pid, {
                         type: 'handshake_ack',
                         from: myPeerId,
                         callsign: myCallsign
@@ -1441,11 +1425,11 @@
                 displayName = (knownPeers[peerId] && knownPeers[peerId] !== 'Loading...') ? knownPeers[peerId] : peerId;
             }
             knownPeers[peerId] = displayName;
-            localStorage.setItem('gp_known_peers', JSON.stringify(knownPeers));
+            try { localStorage.setItem('gp_known_peers', JSON.stringify(knownPeers)); } catch (e) { console.warn('Контакты не сохранены', e); }
 
             if (!chatHistories[peerId]) {
                 chatHistories[peerId] = [
-                    { id: 'w_' + peerId, sender: 'them', author: displayName.toUpperCase(), text: 'Защищенный P2P-канал (' + peerId + '). Можно отправлять сообщения, кружки и звонить!', time: getNowTime() }
+                    { id: 'w_' + peerId, sender: 'them', author: displayName.toUpperCase(), text: 'Канал через публичный ретранслятор (' + peerId + '). Можно отправлять сообщения, кружки и звонить!', time: getNowTime() }
                 ];
             }
 
@@ -1456,15 +1440,15 @@
             } else {
                 const friendsContainer = document.getElementById('friends-list-container');
                 friendsContainer.insertAdjacentHTML('afterbegin', `
-                    <div id="contact-card-${peerId}" class="gp-card" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div id="contact-card-${escapeHtml(peerId)}" class="gp-card" style="display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; display: flex; align-items: center; justify-content: center; color: #34d399; font-family: monospace; font-weight: bold; font-size: 13px;">P2P</div>
                             <div>
-                                <div class="peer-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
-                                <div style="font-size: 11px; color: #34d399; font-family: monospace;">Код: ${peerId} • На связи</div>
+                                <div class="peer-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${escapeHtml(displayName)}</div>
+                                <div style="font-size: 11px; color: #34d399; font-family: monospace;">Код: ${escapeHtml(peerId)} • Контакт</div>
                             </div>
                         </div>
-                        <button onclick="openChat('${peerId}', '${displayName}', false, null, '${peerId}')" class="gp-button" style="padding: 10px;">
+                        <button onclick="openChat(${jsAttribute(peerId)}, ${jsAttribute(displayName)}, false, null, ${jsAttribute(peerId)})" class="gp-button" style="padding: 10px;">
                             <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
                         </button>
                     </div>
@@ -1478,15 +1462,15 @@
             } else {
                 const p2pAnchor = document.getElementById('p2p-chats-Anchor');
                 p2pAnchor.insertAdjacentHTML('afterbegin', `
-                    <div id="chat-card-${peerId}" onclick="openChat('${peerId}', '${displayName}', false, null, '${peerId}')" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-color: rgba(16, 185, 129, 0.6);">
+                    <div id="chat-card-${escapeHtml(peerId)}" onclick="openChat(${jsAttribute(peerId)}, ${jsAttribute(displayName)}, false, null, ${jsAttribute(peerId)})" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-color: rgba(16, 185, 129, 0.6);">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div style="width: 46px; height: 46px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #34d399; font-family: monospace; font-weight: bold;">P2P</div>
                             <div>
-                                <div class="chat-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${displayName}</div>
-                                <div style="font-size: 12px; color: #34d399; margin-top: 3px;">Код друга: ${peerId}</div>
+                                <div class="chat-name-label" style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${escapeHtml(displayName)}</div>
+                                <div style="font-size: 12px; color: #34d399; margin-top: 3px;">Код друга: ${escapeHtml(peerId)}</div>
                             </div>
                         </div>
-                        <span style="font-size: 10px; color: #34d399; font-family: monospace; font-weight: bold;">LIVE</span>
+                        <span style="font-size: 10px; color: #34d399; font-family: monospace; font-weight: bold;">КОНТАКТ</span>
                     </div>
                 `);
             }
@@ -1515,9 +1499,10 @@
         function connectToFriendSubmit() {
             let rawInput = document.getElementById('friend-peer-id-input').value.trim().toLowerCase();
             if (!rawInput) return;
-            const digitsMatch = rawInput.match(/\d{4}/);
-            let target = digitsMatch ? ('ghost-' + digitsMatch[0]) : rawInput;
+            const digitsMatch = rawInput.match(/^(?:ghost-)?(\d{4})$/);
+            let target = digitsMatch ? ('ghost-' + digitsMatch[1]) : rawInput;
 
+            if (!/^ghost-\d{4}$/.test(target)) { showToast('Введите ровно 4 цифры кода'); return; }
             if (target === myPeerId) {
                 showToast('Это ваш собственный код!');
                 return;
@@ -1525,7 +1510,7 @@
             closeConnectFriendModal();
 
             registerPeerContactUI(target, knownPeers[target] || target);
-            sendPacketToPeer(target, {
+            sendPacketSafely(target, {
                 type: 'handshake',
                 from: myPeerId,
                 callsign: myCallsign
@@ -1547,18 +1532,18 @@
             if (!name) return;
             const cid = 'chan-' + Date.now();
             chatHistories[cid] = [
-                { id: 'c_' + cid, sender: 'them', author: name.toUpperCase(), text: 'Защищенный канал «' + name + '» создан.', time: getNowTime() }
+                { id: 'c_' + cid, sender: 'them', author: name.toUpperCase(), text: 'Локальный канал «' + name + '» создан.', time: getNowTime() }
             ];
             saveChatHistories();
             const chatsList = document.getElementById('chats-list');
             const initials = name.slice(0, 2).toUpperCase();
             chatsList.insertAdjacentHTML('beforeend', `
-                <div onclick="openChat('${cid}', '${name}', false, null, null)" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                <div onclick="openChat(${jsAttribute(cid)}, ${jsAttribute(name)}, false, null, null)" class="gp-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 46px; height: 46px; border-radius: 12px; background: var(--accent-bg); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--accent-light); font-family: monospace; font-weight: bold;">${initials}</div>
+                        <div style="width: 46px; height: 46px; border-radius: 12px; background: var(--accent-bg); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--accent-light); font-family: monospace; font-weight: bold;">${escapeHtml(initials)}</div>
                         <div>
-                            <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${name}</div>
-                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 3px;">Защищенный публичный канал</div>
+                            <div style="font-weight: bold; font-size: 14px; color: #f4f4f5; font-family: monospace;">${escapeHtml(name)}</div>
+                            <div style="font-size: 12px; color: #a1a1aa; margin-top: 3px;">Локальный канал: без сетевой публикации</div>
                         </div>
                     </div>
                     <span style="font-size: 10px; color: #34d399; font-family: monospace; font-weight: bold;">CHANNEL</span>
@@ -1579,9 +1564,9 @@
             const text = document.getElementById('story-text-input').value.trim();
             if (!text) return;
             const strip = document.getElementById('stories-strip');
-            const safeText = text.replace(/'/g, "\\'");
+            const safeText = text;
             strip.insertAdjacentHTML('beforeend', `
-                <div onclick="viewStory('${myCallsign}', '${safeText}')" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
+                <div onclick="viewStory(${jsAttribute(myCallsign)}, ${jsAttribute(safeText)})" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                     <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, var(--accent), #f59e0b); display: flex; align-items: center; justify-content: center;">
                         <div style="width: 100%; height: 100%; background: #121216; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--accent-light); font-family: monospace;">ME</div>
                     </div>
@@ -1589,7 +1574,7 @@
                 </div>
             `);
             closeStoryModal();
-            showToast('История опубликована!');
+            showToast('История добавлена только на этом устройстве');
         }
         function viewStory(author, content) {
             document.getElementById('view-story-author').innerText = author;
@@ -1616,7 +1601,7 @@
             document.getElementById('active-chat-title').innerText = actualTitle;
             document.getElementById('active-chat-status').innerText = isAi
                 ? (type === 'deepseek' ? 'DeepSeek Neural • Online' : 'Astra Free • Unlimited')
-                : (peerTarget ? 'P2P Канал • Код: ' + peerTarget : 'E2EE Защищено');
+                : (peerTarget ? 'P2P Канал • Код: ' + peerTarget : 'Локальный канал');
 
             if (!chatHistories[chatId]) {
                 chatHistories[chatId] = [
@@ -1632,12 +1617,33 @@
             document.getElementById('view-active-chat').classList.add('hidden-view');
         }
 
-        function deleteCurrentChatHistory() {
-            if (!currentChatId) return;
-            chatHistories[currentChatId] = [];
-            saveChatHistories();
-            renderMessages(currentChatId);
-            showToast('🗑️ Переписка очищена');
+        async function deleteCurrentChatHistory() {
+            const id = currentChatId;
+            if (!id) return;
+            const oldMessages = chatHistories[id] || [];
+            oldMessages.forEach(m => {
+                m.cancelled = true;
+                const waiter = deliveryWaiters.get(id + ':' + m.id);
+                if (waiter) waiter.resolve();
+                if (mediaBlobUrlCache[m.id]) {
+                    URL.revokeObjectURL(mediaBlobUrlCache[m.id]); delete mediaBlobUrlCache[m.id];
+                }
+            });
+            chatHistories[id] = [];
+            try {
+                await saveChatHistories();
+                const keys = oldMessages.filter(m => m.mediaType).map(m => m.mediaRef || id + ':' + m.id);
+                if (keys.length) {
+                    const db = await openMediaDb();
+                    await new Promise((resolve,reject) => {
+                        const tx = db.transaction('media','readwrite');
+                        for (const key of keys) tx.objectStore('media').delete(key);
+                        tx.oncomplete = resolve;
+                        tx.onerror = tx.onabort = () => reject(tx.error || new Error('Медиа не удалены'));
+                    });
+                }
+                refreshChat(id); showToast('Локальная переписка и её медиа удалены');
+            } catch (e) { showToast('Очистка не завершена: ' + e.message); }
         }
 
         function renderMessages(chatId) {
@@ -1645,24 +1651,31 @@
             const list = chatHistories[chatId] || [];
             container.innerHTML = list.map((m, idx) => {
                 const isMe = m.sender === 'me';
+                const labels = {queued:'В очереди', sending:'Передача', waiting:'Ожидание подтверждения',
+                    unconfirmed:'Нет подтверждения', delivered:'Доставлено'};
                 const checkMark = (isMe && currentPeerTarget)
-                    ? (m.delivered ? ' ✓✓ Доставлено' : ' ✓ Отправлено')
+                    ? ' · ' + (m.delivered ? 'Доставлено' : (labels[m.status] || 'Нет подтверждения')) +
+                      (m.progress ? ' ' + escapeHtml(m.progress) : '') +
+                      (m.error ? '<br>' + escapeHtml(m.error) : '') +
+                      (!m.delivered && !['sending','waiting','queued'].includes(m.status)
+                        ? `<br><button class="gp-button-outline" onclick="retryMessage(${jsAttribute(m.id)})">Повторить</button>` : '')
                     : '';
+                const storageNotice = m.mediaType && !m.mediaUrl ? '<p>Медиа отсутствует в локальном хранилище. Прикрепите файл заново.</p>' : '';
 
-                const playUrl = m.mediaUrl ? getPlayableMediaUrl(m.id || ('idx_' + idx), m.mediaUrl) : '';
+                const playUrl = validMediaUrl(m.mediaUrl) ? getPlayableMediaUrl(m.id || ('idx_' + idx), m.mediaUrl) : '';
 
                 if (m.mediaType === 'video_note' && playUrl) {
                     const vidId = 'vnote_play_' + idx;
                     return `
                         <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; gap: 4px;">
-                            ${!isMe ? `<span style="font-size: 10px; font-family: monospace; color: var(--accent-light); font-weight: bold; margin-left: 8px;">${m.author || 'ДРУГ'}</span>` : ''}
+                            ${!isMe ? `<span style="font-size: 10px; font-family: monospace; color: var(--accent-light); font-weight: bold; margin-left: 8px;">${escapeHtml(m.author || 'ДРУГ')}</span>` : ''}
                             <div class="video-note-bubble" onclick="togglePlayVideoNote('${vidId}')">
                                 <video id="${vidId}" src="${playUrl}" autoplay loop muted playsinline></video>
                                 <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.68); padding: 2px 9px; border-radius: 10px; font-size: 10px; font-family: monospace; color: #fff; pointer-events: none;">
                                     🔊 Звук
                                 </div>
                             </div>
-                            <span style="font-size: 9px; color: #a1a1aa; font-family: monospace;">🎥 Кружок • ${m.time}${checkMark}</span>
+                            <span style="font-size: 9px; color: #a1a1aa; font-family: monospace;">🎥 Кружок • ${escapeHtml(m.time)}${checkMark}</span>
                         </div>
                     `;
                 }
@@ -1682,9 +1695,9 @@
                     return `
                         <div style="display: flex; justify-content: flex-end;">
                             <div style="padding: 12px 14px; border-radius: 16px 16px 4px 16px; background: var(--accent-strong); color: white; max-width: 84%;">
-                                ${mediaHtml}
-                                ${m.text ? `<p style="font-size: 13px; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>` : ''}
-                                <span style="font-size: 9px; opacity: 0.85; font-family: monospace; display: block; text-align: right; margin-top: 4px;">${m.time}${checkMark}</span>
+                                ${mediaHtml}${storageNotice}
+                                ${m.text ? `<p style="font-size: 13px; line-height: 1.45; white-space: pre-wrap;">${escapeHtml(m.text)}</p>` : ''}
+                                <span style="font-size: 9px; opacity: 0.85; font-family: monospace; display: block; text-align: right; margin-top: 4px;">${escapeHtml(m.time)}${checkMark}</span>
                             </div>
                         </div>
                     `;
@@ -1692,10 +1705,10 @@
                     return `
                         <div style="display: flex; justify-content: flex-start;">
                             <div class="gp-card" style="max-width: 85%; margin: 0; padding: 12px 14px; border-radius: 16px 16px 16px 4px;">
-                                <div style="font-size: 10px; font-family: monospace; color: var(--accent-light); margin-bottom: 4px; font-weight: bold;">${m.author || 'УЗЕЛ'}</div>
-                                ${mediaHtml}
-                                ${m.text ? `<p style="font-size: 13px; color: #f4f4f5; line-height: 1.45; white-space: pre-wrap;">${m.text}</p>` : ''}
-                                <span style="font-size: 9px; color: #71717a; font-family: monospace; display: block; margin-top: 4px;">${m.time}</span>
+                                <div style="font-size: 10px; font-family: monospace; color: var(--accent-light); margin-bottom: 4px; font-weight: bold;">${escapeHtml(m.author || 'УЗЕЛ')}</div>
+                                ${mediaHtml}${storageNotice}
+                                ${m.text ? `<p style="font-size: 13px; color: #f4f4f5; line-height: 1.45; white-space: pre-wrap;">${escapeHtml(m.text)}</p>` : ''}
+                                <span style="font-size: 9px; color: #71717a; font-family: monospace; display: block; margin-top: 4px;">${escapeHtml(m.time)}</span>
                             </div>
                         </div>
                     `;
@@ -1715,85 +1728,17 @@
 
         async function handleSendMessageButton() {
             const input = document.getElementById('chat-input');
-            if (!input) return;
-            const text = input.value.trim();
-            if (!text) return;
-
-            const activeId = currentChatId;
-            if (!chatHistories[activeId]) chatHistories[activeId] = [];
-
-            const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-            chatHistories[activeId].push({
-                id: messageId,
-                sender: 'me',
-                author: myCallsign,
-                text: text,
-                time: getNowTime(),
-                delivered: false
-            });
-            input.value = '';
-            saveChatHistories();
-            renderMessages(activeId);
-
-            if (isAiChat) {
-                const loadingId = 'load_' + Date.now();
-                chatHistories[activeId].push({
-                    id: loadingId,
-                    sender: 'them',
-                    author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
-                    text: 'Генерация ответа...',
-                    time: getNowTime()
-                });
-                renderMessages(activeId);
-
-                try {
-                    const sysPrompt = aiType === 'deepseek'
-                        ? 'Ты DeepSeek AI. Отвечай четко, профессионально, на русском языке.'
-                        : 'Ты ChatGPT Astra — полезный безлимитный ИИ-ассистент. Отвечай на русском языке.';
-                    const resp = await fetch('https://text.pollinations.ai/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            messages: [
-                                { role: 'system', content: sysPrompt },
-                                { role: 'user', content: text }
-                            ],
-                            model: 'openai'
-                        })
-                    });
-                    const replyText = await resp.text();
-                    chatHistories[activeId] = chatHistories[activeId].filter(m => m.id !== loadingId);
-                    chatHistories[activeId].push({
-                        id: 'ai_' + Date.now(),
-                        sender: 'them',
-                        author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
-                        text: replyText || 'Ответ получен.',
-                        time: getNowTime()
-                    });
-                } catch (e) {
-                    chatHistories[activeId] = chatHistories[activeId].filter(m => m.id !== loadingId);
-                    chatHistories[activeId].push({
-                        id: 'ai_' + Date.now(),
-                        sender: 'them',
-                        author: 'СИСТЕМА',
-                        text: 'Не удалось связаться с облачным ядром ИИ.',
-                        time: getNowTime()
-                    });
-                }
-                saveChatHistories();
-                renderMessages(activeId);
-                return;
-            }
-
-            if (currentPeerTarget) {
-                sendPacketToPeer(currentPeerTarget, {
-                    type: 'chat',
-                    from: myPeerId,
-                    callsign: myCallsign,
-                    text: text,
-                    chatMsgId: messageId
-                });
-            }
+            if (!input || !input.value.trim()) return;
+            if (isAiChat) { await handleSendMessageButtonAiLegacy(); return; }
+            const destination = captureDestination();
+            if (!destination.peerId) { showToast('Этот канал локальный: выберите чат с другом'); return; }
+            const value = input.value.trim();
+            if (value.length > 20000) { showToast('Сообщение слишком длинное'); return; }
+            const msg = {id:newId('msg'), sender:'me', author:myCallsign, text:value,
+                time:getNowTime(), delivered:false, status:'queued'};
+            (chatHistories[destination.chatId] ||= []).push(msg);
+            input.value = ''; saveChatHistories(); refreshChat(destination.chatId);
+            queueDelivery(destination.peerId, msg);
         }
 
         function sendQuickEmoji(emoji) {
@@ -1819,6 +1764,9 @@
         }
 
         async function openVideoNoteRecorder() {
+            if (!currentPeerTarget || isAiChat) { showToast('Выберите чат с другом'); return; }
+            if (vnoteStream) return;
+            vnoteDestination = captureDestination();
             try {
                 vnoteStream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'user', width: { ideal: 160 }, height: { ideal: 160 }, frameRate: { ideal: 15 } },
@@ -1882,6 +1830,7 @@
         function cancelVideoNote() {
             if (vnoteRecorder && vnoteRecorder.state !== 'inactive') {
                 vnoteRecorder.onstop = null;
+                vnoteRecorder.ondataavailable = null;
                 try { vnoteRecorder.stop(); } catch (e) {}
             }
             stopVnoteHardware();
@@ -1889,7 +1838,8 @@
         }
 
         function finishAndSendVideoNote() {
-            if (!vnoteRecorder) return;
+            if (!vnoteRecorder || vnoteRecorder.state === 'inactive') return;
+            const destination = vnoteDestination;
             document.getElementById('video-note-modal').classList.add('hidden-view');
 
             vnoteRecorder.onstop = () => {
@@ -1905,7 +1855,7 @@
                 reader.onloadend = () => {
                     const base64Video = reader.result;
                     const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-                    sendMediaMessage('video_note', base64Video, 'video-note.' + ext, '');
+                    sendMediaMessage('video_note', base64Video, 'video-note.' + ext, '', destination).catch(e => showToast(e.message));
                 };
                 reader.readAsDataURL(blob);
             };
@@ -1918,107 +1868,55 @@
         }
 
         function triggerAttachFile() {
+            attachDestination = captureDestination();
             document.getElementById('hidden-file-input').value = '';
             document.getElementById('hidden-file-input').click();
         }
 
-        function compressImageFile(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const MAX_DIM = 720;
-                        let w = img.width;
-                        let h = img.height;
-                        if (w > MAX_DIM || h > MAX_DIM) {
-                            if (w > h) {
-                                h = Math.round((h * MAX_DIM) / w);
-                                w = MAX_DIM;
-                            } else {
-                                w = Math.round((w * MAX_DIM) / h);
-                                h = MAX_DIM;
-                            }
-                        }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = w;
-                        canvas.height = h;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', 0.68));
-                    };
-                    img.onerror = () => resolve(e.target.result);
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        async function compressImageFile(file) {
+            const source = await readDataUrl(file);
+            const img = await new Promise((resolve, reject) => {
+                const image = new Image(); image.onload = () => resolve(image);
+                image.onerror = () => reject(new Error('Не удалось открыть изображение'));
+                image.src = source;
             });
+            const scale = Math.min(1, 720 / Math.max(img.width, img.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('Canvas недоступен');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/jpeg', 0.68);
         }
 
         async function handleFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.type.startsWith('image/')) {
-                showToast('⚡ Оптимизация и отправка фото...');
-                const compressedDataUrl = await compressImageFile(file);
-                sendMediaMessage('image', compressedDataUrl, file.name, '📷 ' + file.name);
-                return;
-            }
-
-            if (file.size > 650 * 1024) {
-                showToast('Для видео используйте кнопку «Кружок» или файл до 650 КБ!');
-                return;
-            }
-
-            let mediaType = 'file';
-            if (file.type.startsWith('video/')) mediaType = 'video';
-            else if (file.type.startsWith('audio/')) mediaType = 'audio';
-
-            showToast('Отправка медиафайла...');
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                sendMediaMessage(mediaType, reader.result, file.name, '📎 ' + file.name);
-            };
-            reader.readAsDataURL(file);
+            const destination = attachDestination || captureDestination();
+            attachDestination = null;
+            const file = event.target.files && event.target.files[0];
+            if (!file || !destination.peerId) { showToast('Медиа доступны в чате с другом'); return; }
+            try {
+                if (file.size > 12 * 1024 * 1024) throw new Error('Исходный файл больше 12 МБ');
+                const type = file.type.startsWith('image/') ? 'image' :
+                    file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : null;
+                if (!type) throw new Error('Выберите изображение, аудио или видео');
+                const data = type === 'image' ? await compressImageFile(file) : await readDataUrl(file);
+                await sendMediaMessage(type, data, file.name, file.name, destination);
+            } catch (e) { showToast(e.message); }
         }
 
-        function sendMediaMessage(mediaType, mediaUrl, fileName, captionText) {
-            const activeId = currentChatId;
-            if (!chatHistories[activeId]) chatHistories[activeId] = [];
-
-            const chatMsgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-            getPlayableMediaUrl(chatMsgId, mediaUrl);
-
-            chatHistories[activeId].push({
-                id: chatMsgId,
-                sender: 'me',
-                text: captionText || '',
-                mediaType: mediaType,
-                mediaUrl: mediaUrl,
-                fileName: fileName,
-                time: getNowTime(),
-                delivered: false
-            });
-            saveChatHistories();
-            renderMessages(activeId);
-
-            if (currentPeerTarget) {
-                showToast('📤 Отправка кружка/файла другу...');
-                sendPacketToPeer(currentPeerTarget, {
-                    type: 'chat',
-                    from: myPeerId,
-                    callsign: myCallsign,
-                    text: captionText || '',
-                    mediaType: mediaType,
-                    mediaUrl: mediaUrl,
-                    fileName: fileName,
-                    chatMsgId: chatMsgId
-                }).then(() => {
-                    showToast('✅ Отправлено в сеть!');
-                }).catch(() => {
-                    showToast('Ошибка передачи пакета');
-                });
+        async function sendMediaMessage(mediaType, mediaUrl, fileName, captionText, destination = captureDestination()) {
+            if (!destination.peerId || destination.chatId !== destination.peerId) {
+                showToast('Выберите чат с другом для отправки медиа'); return;
             }
+            if (!validMediaUrl(mediaUrl) || !mediaUrl.startsWith('data:')) throw new Error('Некорректные медиа');
+            if (mediaUrl.length > MAX_MEDIA_CHARS) throw new Error('После подготовки медиа должно быть не больше примерно 650 КБ');
+            const msg = {id:newId('msg'), sender:'me', author:myCallsign, text:captionText || '',
+                mediaType, mediaUrl, fileName:String(fileName || 'media'), time:getNowTime(),
+                delivered:false, status:'queued'};
+            (chatHistories[destination.chatId] ||= []).push(msg);
+            saveChatHistories(); refreshChat(destination.chatId);
+            queueDelivery(destination.peerId, msg);
         }
 
         // =========================================================================
@@ -2044,7 +1942,9 @@
                 aud.volume = 1.0;
                 aud.play().catch(() => {});
                 setTimeout(() => {
-                    try { URL.revokeObjectURL(blobUrl); } catch (e) {}
+                    try { URL.revokeObjectURL(blobUrl);
+                        for (const key of Object.keys(mediaBlobUrlCache)) if (mediaBlobUrlCache[key] === blobUrl) delete mediaBlobUrlCache[key];
+                    } catch (e) {}
                 }, 4000);
             } catch (e) {}
         }
@@ -2065,7 +1965,7 @@
                         try {
                             ctx.drawImage(lv, 0, 0, canvas.width, canvas.height);
                             const jpgFrame = canvas.toDataURL('image/jpeg', 0.42);
-                            sendPacketToPeer(peerId, {
+                            sendPacketSafely(peerId, {
                                 type: 'call_vframe',
                                 from: myPeerId,
                                 frame: jpgFrame
@@ -2100,7 +2000,7 @@
                                 const reader = new FileReader();
                                 reader.onloadend = () => {
                                     if (reader.result && activeCallPeer) {
-                                        sendPacketToPeer(peerId, {
+                                        sendPacketSafely(peerId, {
                                             type: 'call_aframe',
                                             from: myPeerId,
                                             audio: reader.result
@@ -2248,7 +2148,7 @@
 
             const sendInvite = () => {
                 if (!activeCallPeer) return;
-                sendPacketToPeer(activeCallPeer, {
+                sendPacketSafely(activeCallPeer, {
                     type: 'call_invite',
                     from: myPeerId,
                     callsign: myCallsign,
@@ -2307,7 +2207,7 @@
                 pendingRemoteOfferSdp = null;
                 await handleWebRTCOffer(activeCallPeer, offerToProcess);
             } else {
-                sendPacketToPeer(activeCallPeer, {
+                sendPacketSafely(activeCallPeer, {
                     type: 'call_accepted',
                     from: myPeerId,
                     callsign: myCallsign
@@ -2320,7 +2220,7 @@
             document.getElementById('incoming-call-modal').classList.add('hidden-view');
             pendingRemoteOfferSdp = null;
             if (pendingCallFrom) {
-                sendPacketToPeer(pendingCallFrom, {
+                sendPacketSafely(pendingCallFrom, {
                     type: 'call_declined',
                     from: myPeerId
                 });
@@ -2341,7 +2241,7 @@
 
             pc.onicecandidate = (event) => {
                 if (event.candidate) {
-                    sendPacketToPeer(peerId, {
+                    sendPacketSafely(peerId, {
                         type: 'webrtc_ice',
                         from: myPeerId,
                         candidate: event.candidate
@@ -2370,7 +2270,6 @@
                     rv.muted = false;
                     rv.volume = 1.0;
                     rv.play().then(() => {
-                        isWebRtcMediaFlowing = true;
                         const relayImg = document.getElementById('remote-video-relay');
                         if (relayImg) relayImg.style.display = 'none';
                     }).catch(() => {});
@@ -2382,18 +2281,28 @@
                     ra.volume = 1.0;
                     ra.play().catch(() => {});
                 }
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Звук и видео активны';
+                document.getElementById('call-modal-status').innerText = 'На связи • Звук и видео активны';
             };
 
             pc.oniceconnectionstatechange = () => {
                 const st = pc.iceConnectionState;
                 const status = document.getElementById('call-modal-status');
                 if (st === 'connected' || st === 'completed') {
-                    isWebRtcMediaFlowing = true;
-                    if (status) status.innerText = '🔒 На связи • Канал защищен (SRTP)';
+                    if (status) status.innerText = 'WebRTC соединён; ожидается воспроизведение';
                     forceEnableCallAudio();
+                } else if (['disconnected', 'failed', 'closed'].includes(st)) {
+                    isWebRtcMediaFlowing = false;
+                    if (status) status.innerText = 'WebRTC недоступен; резервный ретранслятор';
                 }
             };
+            const played = () => {
+                if (rtcPeerConnection !== pc) return;
+                isWebRtcMediaFlowing = true;
+                const relay = document.getElementById('remote-video-relay');
+                if (relay) relay.style.display = 'none';
+            };
+            document.getElementById('remote-audio').onplaying = played;
+            document.getElementById('remote-video').onplaying = played;
 
             rtcPeerConnection = pc;
             return pc;
@@ -2439,7 +2348,7 @@
                     callsign: myCallsign,
                     answerSdp: pc.localDescription
                 });
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+                document.getElementById('call-modal-status').innerText = 'На связи • Сквозное шифрование SRTP';
             } catch (e) {}
         }
 
@@ -2449,7 +2358,7 @@
                 if (rtcPeerConnection.signalingState !== 'have-local-offer') return;
                 await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
                 await flushPendingIce();
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Медиапоток подключен';
+                document.getElementById('call-modal-status').innerText = 'На связи • Медиапоток подключен';
             } catch (e) {}
         }
 
@@ -2472,7 +2381,7 @@
             stopPort443MediaRelay();
             isWebRtcMediaFlowing = false;
             if (notifyPeer && activeCallPeer) {
-                sendPacketToPeer(activeCallPeer, {
+                sendPacketSafely(activeCallPeer, {
                     type: 'call_hangup',
                     from: myPeerId
                 });
@@ -2505,14 +2414,362 @@
         function closeNukeModal() {
             document.getElementById('nuke-modal').classList.add('hidden-view');
         }
-        function confirmNukeData() {
-            Object.keys(chatHistories).forEach(k => {
-                chatHistories[k] = [];
-            });
-            localStorage.clear();
-            closeNukeModal();
-            showToast('Все данные сеанса уничтожены');
+        async function confirmNukeData() {
+            if (isWiping) return;
+            isWiping = true;
+            showToast('Остановка передач и очистка...');
+            cancelVideoNote(); endActiveCall(false);
+            for (const waiter of deliveryWaiters.values()) waiter.resolve();
+            if (ntfySse) ntfySse.close();
+            if (ntfyWs) { ntfyWs.onclose = null; ntfyWs.close(); }
+            rawMqttSockets.forEach(ws => { ws.onclose = null; ws.close(); });
+            try {
+                await deliveryQueue.catch(() => {});
+                await historyWriteQueue.catch(() => {});
+                const db = await openMediaDb();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction('media', 'readwrite');
+                    tx.objectStore('media').clear();
+                    tx.oncomplete = resolve;
+                    tx.onerror = tx.onabort = () => reject(tx.error || new Error('Очистка медиа не завершена'));
+                });
+                for (const key of Object.keys(localStorage)) if (key.startsWith('gp_')) localStorage.removeItem(key);
+                for (const url of Object.values(mediaBlobUrlCache)) URL.revokeObjectURL(url);
+                location.reload();
+            } catch (e) {
+                isWiping = false; initPort443Network();
+                showToast('Очистка не завершена: ' + e.message);
+            }
         }
+        async function handleSendMessageButtonAiLegacy() {
+            const input = document.getElementById('chat-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            const activeId = currentChatId;
+            if (!chatHistories[activeId]) chatHistories[activeId] = [];
+
+            const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+            chatHistories[activeId].push({
+                id: messageId,
+                sender: 'me',
+                author: myCallsign,
+                text: text,
+                time: getNowTime(),
+                delivered: false
+            });
+            input.value = '';
+            saveChatHistories();
+            refreshChat(activeId);
+
+            if (isAiChat) {
+                const loadingId = 'load_' + Date.now();
+                chatHistories[activeId].push({
+                    id: loadingId,
+                    sender: 'them',
+                    author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
+                    text: 'Генерация ответа...',
+                    time: getNowTime()
+                });
+                refreshChat(activeId);
+
+                try {
+                    const sysPrompt = aiType === 'deepseek'
+                        ? 'Ты DeepSeek AI. Отвечай четко, профессионально, на русском языке.'
+                        : 'Ты ChatGPT Astra — полезный безлимитный ИИ-ассистент. Отвечай на русском языке.';
+                    const resp = await fetch('https://text.pollinations.ai/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: [
+                                { role: 'system', content: sysPrompt },
+                                { role: 'user', content: text }
+                            ],
+                            model: 'openai'
+                        })
+                    });
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                    const replyText = await resp.text();
+                    chatHistories[activeId] = chatHistories[activeId].filter(m => m.id !== loadingId);
+                    chatHistories[activeId].push({
+                        id: 'ai_' + Date.now(),
+                        sender: 'them',
+                        author: aiType === 'deepseek' ? 'DEEPSEEK NEURAL' : 'CHATGPT ASTRA',
+                        text: replyText || 'Ответ получен.',
+                        time: getNowTime()
+                    });
+                } catch (e) {
+                    chatHistories[activeId] = chatHistories[activeId].filter(m => m.id !== loadingId);
+                    chatHistories[activeId].push({
+                        id: 'ai_' + Date.now(),
+                        sender: 'them',
+                        author: 'СИСТЕМА',
+                        text: 'Не удалось связаться с облачным ядром ИИ.',
+                        time: getNowTime()
+                    });
+                }
+                saveChatHistories();
+                refreshChat(activeId);
+                return;
+            }
+
+            if (currentPeerTarget) {
+                sendPacketSafely(currentPeerTarget, {
+                    type: 'chat',
+                    from: myPeerId,
+                    callsign: myCallsign,
+                    text: text,
+                    chatMsgId: messageId
+                });
+            }
+        }
+
+        // Reliability layer. No end-to-end encryption is claimed by this build.
+        const MAX_MEDIA_CHARS = 900000;
+        const MAX_PACKET_CHARS = 1100000;
+        const deliveryWaiters = new Map();
+        const pendingIncoming = new Set();
+        let historyWriteQueue = Promise.resolve();
+        let deliveryQueue = Promise.resolve();
+        let mediaDbPromise = null;
+        let isWiping = false;
+        let vnoteDestination = null;
+        let attachDestination = null;
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+        function newId(prefix) {
+            return prefix + '_' + (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() :
+                Date.now().toString(36) + '_' + Math.random().toString(36).slice(2));
+        }
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch =>
+                ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+        function jsAttribute(value) { return escapeHtml(JSON.stringify(String(value))); }
+        function validMediaUrl(value) {
+            return typeof value === 'string' && value.length <= MAX_MEDIA_CHARS &&
+                /^data:(image\/(?:jpeg|png|gif|webp|avif)|video\/(?:mp4|webm|ogg|quicktime)|audio\/[a-z0-9.+-]+)(?:;codecs=[a-z0-9, ._-]+)?;base64,[a-z0-9+/=\r\n]+$/i.test(value);
+        }
+        function utf8ToBase64(value) {
+            const bytes = new TextEncoder().encode(value);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i += 8192)
+                binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+            return btoa(binary);
+        }
+        function base64ToUtf8(value) {
+            return new TextDecoder('utf-8', {fatal:true}).decode(Uint8Array.from(atob(value), c => c.charCodeAt(0)));
+        }
+        function captureDestination() { return {chatId:currentChatId, peerId:currentPeerTarget}; }
+        function refreshChat(id) {
+            if (id === currentChatId) renderMessages(id);
+        }
+        function readDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Ошибка чтения файла'));
+                reader.onabort = () => reject(new Error('Чтение отменено'));
+                reader.readAsDataURL(file);
+            });
+        }
+        async function postHttpFrame(topic, body) {
+            if (new TextEncoder().encode(body).length > 3800) throw new Error('HTTP-часть слишком большая');
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 15000);
+                try {
+                    const response = await fetch('https://ntfy.sh/' + topic, {
+                        method:'POST', headers:{'Content-Type':'text/plain; charset=utf-8'},
+                        body, signal:controller.signal
+                    });
+                    if (response.ok) return;
+                    const retryable = response.status === 429 || response.status >= 500;
+                    if (!retryable || attempt === 2) throw new Error('HTTP ' + response.status);
+                    const retry = response.headers && response.headers.get('Retry-After');
+                    let seconds = Number(retry);
+                    if (retry && !Number.isFinite(seconds)) seconds = (Date.parse(retry) - Date.now()) / 1000;
+                    if (Number.isFinite(seconds) && seconds > 60) throw new Error('Лимит сервиса: повторите позже');
+                    await delay(Math.max(1000 * 2 ** attempt, (seconds || 0) * 1000));
+                } finally { clearTimeout(timer); }
+            }
+        }
+        function openMediaDb() {
+            if (!mediaDbPromise) mediaDbPromise = new Promise((resolve, reject) => {
+                if (!globalThis.indexedDB) { reject(new Error('IndexedDB недоступен')); return; }
+                const request = indexedDB.open('gp_media_v1', 1);
+                request.onupgradeneeded = () => request.result.createObjectStore('media');
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('Не удалось открыть медиахранилище'));
+                request.onblocked = () => reject(new Error('Закройте другие вкладки приложения'));
+            });
+            return mediaDbPromise;
+        }
+        async function mediaStoreWrite(entries) {
+            const db = await openMediaDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction('media', 'readwrite');
+                for (const entry of entries) tx.objectStore('media').put(entry.value, entry.key);
+                tx.oncomplete = resolve;
+                tx.onerror = tx.onabort = () => reject(tx.error || new Error('Нет места для медиа'));
+            });
+        }
+        async function hydrateMedia() {
+            const refs = [];
+            for (const list of Object.values(chatHistories)) for (const m of list) {
+                if (m.sender === 'me' && !m.delivered && ['sending','queued','waiting'].includes(m.status))
+                    m.status = 'unconfirmed';
+                if (m.mediaRef && !m.mediaUrl) refs.push(m);
+            }
+            if (!refs.length) return;
+            try {
+                const db = await openMediaDb();
+                await Promise.all(refs.map(m => new Promise((resolve, reject) => {
+                    const request = db.transaction('media', 'readonly').objectStore('media').get(m.mediaRef);
+                    request.onsuccess = () => {
+                        if (validMediaUrl(request.result)) m.mediaUrl = request.result;
+                        else m.storageError = 'Медиа отсутствует в хранилище';
+                        resolve();
+                    };
+                    request.onerror = () => reject(request.error);
+                })));
+            } catch (e) { showToast('Не удалось восстановить медиа: ' + e.message); }
+        }
+        function armDeliveryWait(peer, id) {
+            const key = peer + ':' + id;
+            let resolvePromise;
+            const promise = new Promise(resolve => { resolvePromise = resolve; });
+            const waiter = {promise, done:false, resolve:() => { waiter.done = true; resolvePromise(true); }};
+            deliveryWaiters.set(key, waiter);
+            return waiter;
+        }
+        async function waitDelivery(waiter, timeout) {
+            if (waiter.done) return true;
+            let timer;
+            const result = await Promise.race([waiter.promise, new Promise(resolve => {
+                timer = setTimeout(() => resolve(false), timeout);
+            })]);
+            clearTimeout(timer);
+            return result;
+        }
+        function queueDelivery(peer, msg) {
+            deliveryQueue = deliveryQueue.catch(() => {}).then(() => deliverMessage(peer, msg));
+            deliveryQueue.catch(e => console.error('Очередь передачи', e));
+        }
+        async function deliverMessage(peer, msg) {
+            const waiter = armDeliveryWait(peer, msg.id);
+            let lastError = '';
+            try {
+                for (let attempt = 0; attempt < 3 && !isWiping && !msg.cancelled && !msg.delivered; attempt++) {
+                    msg.status = 'sending'; msg.progress = ''; msg.error = '';
+                    refreshChat(peer);
+                    const packet = {type:'chat', from:myPeerId, callsign:myCallsign,
+                        chatMsgId:msg.id, text:msg.text || '', mediaType:msg.mediaType || null,
+                        mediaUrl:msg.mediaUrl || null, fileName:msg.fileName || null};
+                    try {
+                        await sendPacketToPeer(peer, packet, {
+                            forceHttp:attempt === 1,
+                            onProgress:(n,total) => { msg.progress = Math.round(n / total * 100) + '%'; refreshChat(peer); }
+                        });
+                        if (msg.delivered) break;
+                        msg.status = 'waiting'; refreshChat(peer);
+                        if (await waitDelivery(waiter, 15000)) break;
+                        lastError = 'Получатель не подтвердил получение';
+                    } catch (e) { lastError = e.message; }
+                    if (attempt < 2 && !msg.delivered) await delay(1200 * (attempt + 1));
+                }
+                if (!msg.delivered) { msg.status = 'unconfirmed'; msg.error = lastError || 'Передача прервана'; }
+                else { msg.status = 'delivered'; msg.error = ''; }
+            } finally {
+                deliveryWaiters.delete(peer + ':' + msg.id);
+                msg.progress = ''; saveChatHistories(); refreshChat(peer);
+            }
+        }
+        function retryMessage(id) {
+            const peer = currentPeerTarget;
+            const msg = (chatHistories[currentChatId] || []).find(m => m.id === id && m.sender === 'me');
+            if (!peer || !msg || msg.delivered || ['sending','waiting','queued'].includes(msg.status)) return;
+            if (msg.mediaType && !validMediaUrl(msg.mediaUrl)) { showToast('Медиа отсутствует: прикрепите файл заново'); return; }
+            msg.status = 'queued'; queueDelivery(peer, msg); refreshChat(peer);
+        }
+        async function sendDeliveryAck(peer, chatMsgId) {
+            const packet = {type:'delivery_ack', from:myPeerId, callsign:myCallsign, chatMsgId};
+            try { await sendPacketToPeer(peer, packet); }
+            catch (e) { console.warn('ACK', e); }
+        }
+        function handleIncomingPacket(data) {
+            receivePacket(data).catch(e => console.error('Обработка пакета', e));
+        }
+        async function receivePacket(data) {
+            if (!data || !/^ghost-\d{4}$/.test(data.from || '') || data.from === myPeerId || isWiping) return;
+            if (typeof data.type !== 'string' || typeof data.msgId !== 'string' || data.msgId.length > 150) return;
+            if (data.callsign != null && (typeof data.callsign !== 'string' || data.callsign.length > 100)) return;
+            if (data.type === 'delivery_ack') {
+                if (typeof data.chatMsgId !== 'string') return;
+                const msg = (chatHistories[data.from] || []).find(m => m.id === data.chatMsgId && m.sender === 'me');
+                if (!msg) return;
+                msg.delivered = true; msg.status = 'delivered'; msg.error = '';
+                const waiter = deliveryWaiters.get(data.from + ':' + data.chatMsgId);
+                if (waiter) waiter.resolve();
+                saveChatHistories(); refreshChat(data.from); return;
+            }
+            if (data.type === 'chat') {
+                if (typeof data.chatMsgId !== 'string' || data.chatMsgId.length > 150 ||
+                    (data.text != null && (typeof data.text !== 'string' || data.text.length > 20000)) ||
+                    (data.fileName != null && (typeof data.fileName !== 'string' || data.fileName.length > 255)) ||
+                    (data.mediaType && !['image','video','audio','video_note'].includes(data.mediaType)) ||
+                    (data.mediaUrl && !validMediaUrl(data.mediaUrl)) ||
+                    (data.mediaType && !data.mediaUrl) || (data.mediaUrl && !data.mediaType)) return;
+                const key = data.from + ':' + data.chatMsgId;
+                if (pendingIncoming.has(key)) return;
+                pendingIncoming.add(key);
+                try {
+                    const existing = (chatHistories[data.from] || []).find(m => m.id === data.chatMsgId && m.sender === 'them');
+                    if (!existing) {
+                        // Persistence must succeed before acknowledging receipt.
+                        if (data.mediaUrl) await mediaStoreWrite([{key, value:data.mediaUrl}]);
+                        if (isWiping) return;
+                        handleIncomingPacketLegacy(data);
+                    }
+                    await saveChatHistories();
+                    await sendDeliveryAck(data.from, data.chatMsgId);
+                } finally { pendingIncoming.delete(key); }
+                return;
+            }
+            const callTypes = ['call_ringing','call_accepted','call_vframe','call_aframe','call_declined',
+                'call_hangup','webrtc_offer','webrtc_answer','webrtc_ice'];
+            if (callTypes.includes(data.type) && data.from !== activeCallPeer && data.from !== pendingCallFrom) return;
+            handleIncomingPacketLegacy(data);
+            if (processedMsgIds.size > 12000) processedMsgIds.clear();
+        }
+        setInterval(() => {
+            for (const [key, value] of Object.entries(incomingChunkBuffers))
+                if (Date.now() - value.updated > 180000) delete incomingChunkBuffers[key];
+            const online = rawMqttSockets.some(ws => ws.readyState === 1 && ws.isMqttReady) ||
+                (ntfyWs && ntfyWs.readyState === 1) || (ntfySse && ntfySse.readyState === 1);
+            if (!online) {
+                const badge = document.getElementById('p2p-status-badge');
+                if (badge) { badge.innerText = 'СЕТЬ: НЕТ СОЕДИНЕНИЯ'; badge.style.color = '#fbbf24'; }
+                const dot = document.getElementById('p2p-status-dot');
+                if (dot) { dot.style.background = '#fbbf24'; dot.style.boxShadow = 'none'; }
+            }
+        }, 5000);
+
+        function sendPacketSafely(peer, packet) {
+            return sendPacketToPeer(peer, packet).catch(e => {
+                console.warn('Сигнал не отправлен', e);
+                if (!['call_vframe','call_aframe','webrtc_ice'].includes(packet.type)) showToast('Сбой отправки: ' + e.message);
+                return false;
+            });
+        }
+
+        function safeStoredJson(key, fallback) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || 'null');
+                return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback;
+            } catch (e) { console.warn('Повреждённые сохранённые данные', key, e); return fallback; }
+        }
+
     </script>
 </body>
 </html>
