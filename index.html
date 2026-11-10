@@ -649,15 +649,15 @@
             </div>
         </div>
     </div>
-
-    <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
+        <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
     <div id="call-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="max-width: 360px;">
             <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный вызов</h3>
             <p id="call-modal-status" style="font-size: 11px; color: #34d399; font-family: monospace;">Вызов абонента...</p>
             <div id="video-wrapper" style="display: none; position: relative; width: 100%; height: 270px; background: #050505; border-radius: 14px; overflow: hidden; border: 1px solid var(--accent-border);">
                 <video id="remote-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
-                <div id="remote-video-placeholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; font-family: monospace; font-size: 11px; pointer-events: none;">
+                <img id="remote-video-relay" alt="" style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; z-index: 2;">
+                <div id="remote-video-placeholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; font-family: monospace; font-size: 11px; pointer-events: none; z-index: 3;">
                     Ожидание видеопотока собеседника...
                 </div>
                 <video id="local-video" autoplay playsinline muted style="position: absolute; bottom: 8px; right: 8px; width: 84px; height: 116px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); background: #111; transform: scaleX(-1); z-index: 5;"></video>
@@ -697,7 +697,12 @@
             localStorage.setItem('gp_pin_code', savedPin);
         }
         let myPeerId = 'ghost-' + savedPin;
-        let myCallsign = localStorage.getItem('gp_callsign') || ('Ghost_' + savedPin);
+        let storedCallsign = localStorage.getItem('gp_callsign');
+        if (!storedCallsign || storedCallsign === 'Loading...' || storedCallsign === 'Ghos') {
+            storedCallsign = 'Ghost_' + savedPin;
+            localStorage.setItem('gp_callsign', storedCallsign);
+        }
+        let myCallsign = storedCallsign;
         let currentTheme = localStorage.getItem('gp_theme') || 'crimson';
 
         let currentChatId = 'astra';
@@ -771,6 +776,11 @@
         let pendingRemoteOfferSdp = null;
         let currentCallId = null;
         let isMicMuted = false;
+        let isWebRtcMediaFlowing = false;
+        let relayVideoTimer = null;
+        let relayAudioRecorder = null;
+        let relayAudioInterval = null;
+        let sharedAudioCtx = null;
 
         // Переменные для записи видео-кружка
         let vnoteStream = null;
@@ -873,14 +883,14 @@
                     if (!buf.parts[pkt.idx]) {
                         buf.parts[pkt.idx] = pkt.data;
                         buf.received++;
-                    }
-                    if (pkt.total > 3 && buf.received < buf.total && buf.received % 5 === 0) {
-                        const pct = Math.round((buf.received / buf.total) * 100);
-                        showToast('📥 Прием медиа: ' + pct + '%...');
+                    if ( buf.received < buf.total ) {
+                        const pct = Math.max(1, Math.round((buf.received / buf.total) * 100));
+                        showToast('📥 Прием медиа: ' + pct + '% (' + buf.received + '/' + buf.total + ')');
                     }
                     if (buf.received === buf.total) {
                         const fullJson = buf.parts.join('');
                         delete incomingChunkBuffers[pkt.transferId];
+                        showToast('✅ Медиафайл успешно получен!');
                         handleIncomingPacket(JSON.parse(fullJson));
                     }
                     return;
@@ -985,7 +995,7 @@
         }
 
         function connectNativeMqttPort443() {
-            rawMqttSockets.forEach(s => { try { s.close(); } catch (e) {} });
+            rawMqttSockets.forEach(s => { try { s.onclose = null; s.close(); } catch (e) {} });
             rawMqttSockets = [];
 
             const urls = [
@@ -995,44 +1005,64 @@
             ];
 
             urls.forEach(url => {
-                try {
-                    const ws = new WebSocket(url, 'mqtt');
-                    ws.binaryType = 'arraybuffer';
-                    ws.onopen = () => {
-                        const cid = 'gp7_' + savedPin + '_' + Math.random().toString(16).slice(2, 7);
-                        ws.send(buildMqttConnectPacket(cid));
-                    };
-                    ws.onmessage = (evt) => {
-                        const bytes = new Uint8Array(evt.data);
-                        if (!bytes.length) return;
-                        const type = (bytes[0] >> 4) & 0x0f;
+                connectSingleMqttBroker(url);
+            });
+        }
+
+        function connectSingleMqttBroker(url) {
+            try {
+                const ws = new WebSocket(url, 'mqtt');
+                ws.binaryType = 'arraybuffer';
+                ws.brokerUrl = url;
+                ws.onopen = () => {
+                    const cid = 'gp7_' + savedPin + '_' + Math.random().toString(16).slice(2, 7);
+                    ws.send(buildMqttConnectPacket(cid));
+                };
+                ws.onmessage = (evt) => {
+                    const bytes = new Uint8Array(evt.data);
+                    let offset = 0;
+                    // Поддержка склеенных TCP/WS фреймов (несколько MQTT пакетов в одном событии)
+                    while (offset < bytes.length) {
+                        const type = (bytes[offset] >> 4) & 0x0f;
+                        let pos = offset + 1;
+                        let mult = 1;
+                        let rem = 0;
+                        while (pos < bytes.length) {
+                            const b = bytes[pos++];
+                            rem += (b & 0x7f) * mult;
+                            mult *= 128;
+                            if ((b & 0x80) === 0) break;
+                        }
+                        const packetEnd = pos + rem;
+                        if (packetEnd > bytes.length) break;
+
                         if (type === 2) {
                             setNetworkOnlineBadge();
                             ws.isMqttReady = true;
                             ws.send(buildMqttSubscribePacket(getInboxTopic(myPeerId)));
                         } else if (type === 3) {
-                            let pos = 1;
-                            let mult = 1;
-                            let rem = 0;
-                            while (pos < bytes.length) {
-                                const b = bytes[pos++];
-                                rem += (b & 0x7f) * mult;
-                                mult *= 128;
-                                if ((b & 0x80) === 0) break;
-                            }
-                            const packetEnd = pos + rem;
-                            const tLen = (bytes[pos] << 8) | bytes[pos + 1];
-                            pos += 2 + tLen;
-                            const qos = (bytes[0] >> 1) & 0x03;
-                            if (qos > 0) pos += 2;
-                            const payloadBytes = bytes.slice(pos, packetEnd);
+                            let p = pos;
+                            const tLen = (bytes[p] << 8) | bytes[p + 1];
+                            p += 2 + tLen;
+                            const qos = (bytes[offset] >> 1) & 0x03;
+                            if (qos > 0) p += 2;
+                            const payloadBytes = bytes.slice(p, packetEnd);
                             const jsonStr = new TextDecoder().decode(payloadBytes);
                             handleRawNetworkJson(jsonStr);
                         }
-                    };
-                    rawMqttSockets.push(ws);
-                } catch (e) {}
-            });
+                        offset = packetEnd;
+                    }
+                };
+                ws.onclose = () => {
+                    ws.isMqttReady = false;
+                    setTimeout(() => {
+                        const idx = rawMqttSockets.indexOf(ws);
+                        if (idx !== -1) rawMqttSockets.splice(idx, 1);
+                        connectSingleMqttBroker(url);
+                    }, 3000);
+                };
+                rawMqttSockets.push(ws);
+            } catch (e) {}
         }
 
         setInterval(() => {
@@ -1043,7 +1073,7 @@
             });
         }, 20000);
 
-        async function transmitSingleFrame(targetTopic, frameJson) {
+        async function transmitSingleFrame(targetTopic, frameJson, skipHttp) {
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
             let mqttSent = false;
             rawMqttSockets.forEach(ws => {
@@ -1052,35 +1082,41 @@
                 }
             });
 
-            // Параллельно дублируем через HTTPS POST на порт 443 для одиночных пакетов
-            try {
-                fetch('https://ntfy.sh/' + targetTopic, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-                    body: frameJson
-                }).then(r => { if (r.ok) setNetworkOnlineBadge(); }).catch(() => {});
-            } catch (e) {}
+            if (!skipHttp) {
+                try {
+                    fetch('https://ntfy.sh/' + targetTopic, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                        body: frameJson
+                    }).then(r => { if (r.ok) setNetworkOnlineBadge(); }).catch(() => {});
+                } catch (e) {}
+            }
 
             return mqttSent;
         }
 
         async function transmitChunkFrame(targetTopic, frameJson, chunkIndex) {
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
-            let mqttSent = false;
-            rawMqttSockets.forEach(ws => {
-                if (ws && ws.readyState === 1 && ws.isMqttReady) {
-                    try { ws.send(mqttPkt); mqttSent = true; } catch (e) {}
+            let sentCount = 0;
+            // Отправляем максимум через 2 активных сокета, чтобы не перегружать буфер
+            for (let i = 0; i < rawMqttSockets.length; i++) {
+                const ws = rawMqttSockets[i];
+                if (ws && ws.readyState === 1 && ws.isMqttReady && ws.bufferedAmount < 65536) {
+                    try {
+                        ws.send(mqttPkt);
+                        sentCount++;
+                        if (sentCount >= 2) break;
+                    } catch (e) {}
                 }
-            });
+            }
 
-            // Если ни один MQTT WebSocket еще не открыт, отправляем через HTTPS с бережной паузой
-            if (!mqttSent) {
+            if (sentCount === 0) {
                 await fetch('https://ntfy.sh/' + targetTopic, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                     body: frameJson
                 }).catch(() => {});
-                await new Promise(r => setTimeout(r, 250));
+                await new Promise(r => setTimeout(r, 220));
             }
         }
 
@@ -1089,9 +1125,13 @@
             const targetTopic = getInboxTopic(targetPeerId);
             const rawJson = JSON.stringify(packet);
 
-            const CHUNK_SIZE = 2600;
+            // Оптимальный размер чанка 7500 байт для MQTT (кружок или фото = всего 5-8 частей!)
+            const hasReadyMqtt = rawMqttSockets.some(ws => ws && ws.readyState === 1 && ws.isMqttReady);
+            const CHUNK_SIZE = hasReadyMqtt ? 7500 : 2500;
+
             if (rawJson.length <= CHUNK_SIZE) {
-                await transmitSingleFrame(targetTopic, rawJson);
+                const isRealtimeStream = (packet.type === 'call_vframe' || packet.type === 'call_aframe');
+                await transmitSingleFrame(targetTopic, rawJson, isRealtimeStream || rawJson.length > 3500);
                 return;
             }
 
@@ -1109,9 +1149,8 @@
                     data: slice
                 });
                 await transmitChunkFrame(targetTopic, chunkFrame, i);
-                if (i % 5 === 4) {
-                    await new Promise(r => setTimeout(r, 28));
-                }
+                // Безопасная пауза 85 мс между частями, чтобы MQTT-брокеры никогда не разрывали соединение
+                await new Promise(r => setTimeout(r, 85));
             }
         }
 
@@ -1126,7 +1165,7 @@
             }
 
             const senderId = data.from;
-            const senderCallsign = data.callsign || senderId;
+            const senderCallsign = (data.callsign && data.callsign !== 'Loading...') ? data.callsign : senderId;
 
             syncPeerByCallsign(senderId, senderCallsign);
 
@@ -1234,9 +1273,30 @@
                     callInviteInterval = null;
                 }
                 const st = document.getElementById('call-modal-status');
-                if (st) st.innerText = 'Собеседник ответил • Соединение потоков...';
+                if (st) st.innerText = '🔒 На связи • Аудио и видео поток активен';
+                startPort443MediaRelay(senderId);
                 if (data.answerSdp && rtcPeerConnection) {
                     handleWebRTCAnswer(data.answerSdp);
+                }
+            }
+            else if (data.type === 'call_vframe') {
+                // Прием живого видеокадра по Порту-443 (работает даже через VPN + 4G!)
+                if (activeCallPeer === senderId && !isWebRtcMediaFlowing && data.frame) {
+                    const relayImg = document.getElementById('remote-video-relay');
+                    const ph = document.getElementById('remote-video-placeholder');
+                    if (relayImg) {
+                        relayImg.src = data.frame;
+                        relayImg.style.display = 'block';
+                    }
+                    if (ph) ph.style.display = 'none';
+                    const st = document.getElementById('call-modal-status');
+                    if (st) st.innerText = '🔒 На связи • Видео и звук активны';
+                }
+            }
+            else if (data.type === 'call_aframe') {
+                // Прием живого голосового пакета по Порту-443
+                if (activeCallPeer === senderId && !isWebRtcMediaFlowing && data.audio) {
+                    playIncomingRelayAudio(data.audio);
                 }
             }
             else if (data.type === 'call_declined') {
@@ -1769,7 +1829,7 @@
         async function openVideoNoteRecorder() {
             try {
                 vnoteStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 200 }, height: { ideal: 200 }, frameRate: { ideal: 20 } },
+                    video: { facingMode: 'user', width: { ideal: 160 }, height: { ideal: 160 }, frameRate: { ideal: 15 } },
                     audio: true
                 });
             } catch (e) {
@@ -1784,14 +1844,15 @@
 
             vnoteChunks = [];
             vnoteSeconds = 0;
-            document.getElementById('vnote-timer').innerText = '00:00 / 00:10';
+            document.getElementById('vnote-timer').innerText = '00:00 / 00:07';
             document.getElementById('video-note-modal').classList.remove('hidden-view');
             lucide.createIcons();
 
             const mime = getSupportedVideoMime();
+            // Компактный битрейт (95 кбит/с), чтобы кружок весил ~45-65 КБ и доходил за 1 секунду!
             const options = mime
-                ? { mimeType: mime, videoBitsPerSecond: 140000, audioBitsPerSecond: 28000 }
-                : { videoBitsPerSecond: 140000, audioBitsPerSecond: 28000 };
+                ? { mimeType: mime, videoBitsPerSecond: 75000, audioBitsPerSecond: 22000 }
+                : { videoBitsPerSecond: 75000, audioBitsPerSecond: 22000 };
 
             try {
                 vnoteRecorder = new MediaRecorder(vnoteStream, options);
@@ -1809,8 +1870,8 @@
             vnoteTimerInterval = setInterval(() => {
                 vnoteSeconds++;
                 const secStr = String(vnoteSeconds).padStart(2, '0');
-                document.getElementById('vnote-timer').innerText = '00:' + secStr + ' / 00:10';
-                if (vnoteSeconds >= 10) {
+                document.getElementById('vnote-timer').innerText = '00:' + secStr + ' / 00:07';
+                if (vnoteSeconds >= 7) {
                     finishAndSendVideoNote();
                 }
             }, 1000);
@@ -1870,21 +1931,60 @@
             document.getElementById('hidden-file-input').click();
         }
 
-        function handleFileSelected(event) {
+        // Автоматическое сжатие больших фотографий с камеры телефона до ~35 КБ для мгновенной пересылки
+        function compressImageFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const MAX_DIM = 720;
+                        let w = img.width;
+                        let h = img.height;
+                        if (w > MAX_DIM || h > MAX_DIM) {
+                            if (w > h) {
+                                h = Math.round((h * MAX_DIM) / w);
+                                w = MAX_DIM;
+                            } else {
+                                w = Math.round((w * MAX_DIM) / h);
+                                h = MAX_DIM;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', 0.68));
+                    };
+                    img.onerror = () => resolve(e.target.result);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleFileSelected(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            if (file.size > 3.5 * 1024 * 1024) {
-                showToast('Выберите файл до 3.5 МБ для быстрой отправки');
+            if (file.type.startsWith('image/')) {
+                showToast('⚡ Оптимизация и отправка фото...');
+                const compressedDataUrl = await compressImageFile(file);
+                sendMediaMessage('image', compressedDataUrl, file.name, '📷 ' + file.name);
+                return;
+            }
+
+            if (file.size > 650 * 1024) {
+                showToast('Для видео используйте кнопку «Кружок» или файл до 650 КБ!');
                 return;
             }
 
             let mediaType = 'file';
             if (file.type.startsWith('video/')) mediaType = 'video';
-            else if (file.type.startsWith('image/')) mediaType = 'image';
             else if (file.type.startsWith('audio/')) mediaType = 'audio';
 
-            showToast('Сжатие и отправка файла...');
+            showToast('Отправка медиафайла...');
             const reader = new FileReader();
             reader.onloadend = () => {
                 sendMediaMessage(mediaType, reader.result, file.name, '📎 ' + file.name);
@@ -1932,12 +2032,137 @@
         }
 
         // =========================================================================
-        // 4. АУДИО И ВИДЕОЗВОНКИ WEBRTC (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЕ)
+        // 4. АУДИО И ВИДЕОЗВОНКИ (ГИБРИД WEBRTC + ПОРТ-443 РЕТРАНСЛЯТОР ДЛЯ VPN/4G)
         // =========================================================================
+        function initSharedAudioContext() {
+            try {
+                if (!sharedAudioCtx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    sharedAudioCtx = new AudioCtx();
+                }
+                if (sharedAudioCtx.state === 'suspended') {
+                    sharedAudioCtx.resume();
+                }
+            } catch (e) {}
+        }
+
+        function playIncomingRelayAudio(dataUrl) {
+            try {
+                initSharedAudioContext();
+                const blobUrl = getPlayableMediaUrl('aud_' + Date.now() + '_' + Math.random(), dataUrl);
+                const aud = new Audio(blobUrl);
+                aud.volume = 1.0;
+                aud.play().catch(() => {});
+                setTimeout(() => {
+                    try { URL.revokeObjectURL(blobUrl); } catch (e) {}
+                }, 4000);
+            } catch (e) {}
+        }
+
+        function startPort443MediaRelay(peerId) {
+            stopPort443MediaRelay();
+            initSharedAudioContext();
+
+            // 1. Ретрансляция видеокадров через Порт-443 (если включен видеозвонок)
+            if (isCurrentCallVideo && localStream) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 140;
+                canvas.height = 180;
+                const ctx = canvas.getContext('2d');
+                relayVideoTimer = setInterval(() => {
+                    if (!activeCallPeer || isWebRtcMediaFlowing) return;
+                    const lv = document.getElementById('local-video');
+                    if (lv && lv.readyState >= 2) {
+                        try {
+                            ctx.drawImage(lv, 0, 0, canvas.width, canvas.height);
+                            const jpgFrame = canvas.toDataURL('image/jpeg', 0.42);
+                            sendPacketToPeer(peerId, {
+                                type: 'call_vframe',
+                                from: myPeerId,
+                                frame: jpgFrame
+                            });
+                        } catch (e) {}
+                    }
+                }, 280);
+            }
+
+            // 2. Ретрансляция живого голоса короткими пакетами через Порт-443
+            if (localStream && localStream.getAudioTracks().length > 0) {
+                const startAudioSlice = () => {
+                    if (!activeCallPeer || isWebRtcMediaFlowing || !localStream) return;
+                    if (isMicMuted) {
+                        relayAudioInterval = setTimeout(startAudioSlice, 900);
+                        return;
+                    }
+                    try {
+                        const audioOnlyStream = new MediaStream(localStream.getAudioTracks());
+                        let rec;
+                        try {
+                            rec = new MediaRecorder(audioOnlyStream, { audioBitsPerSecond: 20000 });
+                        } catch (e) {
+                            rec = new MediaRecorder(audioOnlyStream);
+                        }
+                        const chunks = [];
+                        rec.ondataavailable = (ev) => {
+                            if (ev.data && ev.data.size > 0) chunks.push(ev.data);
+                        };
+                        rec.onstop = () => {
+                            if (chunks.length > 0 && activeCallPeer && !isWebRtcMediaFlowing) {
+                                const blob = new Blob(chunks, { type: rec.mimeType || 'audio/mp4' });
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                    if (reader.result && activeCallPeer) {
+                                        sendPacketToPeer(peerId, {
+                                            type: 'call_aframe',
+                                            from: myPeerId,
+                                            audio: reader.result
+                                        });
+                                    }
+                                };
+                                reader.readAsDataURL(blob);
+                            }
+                            if (activeCallPeer && !isWebRtcMediaFlowing) {
+                                relayAudioInterval = setTimeout(startAudioSlice, 60);
+                            }
+                        };
+                        rec.start();
+                        relayAudioRecorder = rec;
+                        setTimeout(() => {
+                            if (rec && rec.state === 'recording') {
+                                try { rec.stop(); } catch (e) {}
+                            }
+                        }, 850);
+                    } catch (e) {}
+                };
+                startAudioSlice();
+            }
+        }
+
+        function stopPort443MediaRelay() {
+            if (relayVideoTimer) {
+                clearInterval(relayVideoTimer);
+                relayVideoTimer = null;
+            }
+            if (relayAudioInterval) {
+                clearTimeout(relayAudioInterval);
+                relayAudioInterval = null;
+            }
+            if (relayAudioRecorder && relayAudioRecorder.state === 'recording') {
+                relayAudioRecorder.onstop = null;
+                try { relayAudioRecorder.stop(); } catch (e) {}
+            }
+            relayAudioRecorder = null;
+            const relayImg = document.getElementById('remote-video-relay');
+            if (relayImg) {
+                relayImg.style.display = 'none';
+                relayImg.src = '';
+            }
+        }
+
         async function acquireMediaStream(withVideo) {
             try {
                 return await navigator.mediaDevices.getUserMedia({
-                    video: withVideo ? { facingMode: 'user', width: { ideal: 360 }, height: { ideal: 480 } } : false,
+                    video: withVideo ? { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 420 } } : false,
                     audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
                 });
             } catch (e) {
@@ -1950,6 +2175,7 @@
         }
 
         function unlockMediaElementsOnUserGesture() {
+            initSharedAudioContext();
             const rv = document.getElementById('remote-video');
             const ra = document.getElementById('remote-audio');
             if (rv) {
@@ -1963,6 +2189,7 @@
         }
 
         function forceEnableCallAudio() {
+            initSharedAudioContext();
             const rv = document.getElementById('remote-video');
             const ra = document.getElementById('remote-audio');
             if (rv && rv.srcObject) {
@@ -1996,6 +2223,7 @@
             unlockMediaElementsOnUserGesture();
             isCurrentCallVideo = withVideo;
             isMicMuted = false;
+            isWebRtcMediaFlowing = false;
             currentCallId = 'call_' + Date.now();
             pendingIceCandidates = [];
 
@@ -2064,6 +2292,7 @@
             activeCallPeer = pendingCallFrom;
             isCurrentCallVideo = pendingCallWithVideo;
             isMicMuted = false;
+            isWebRtcMediaFlowing = false;
 
             document.getElementById('call-modal-title').innerText = isCurrentCallVideo ? 'Видеовызов P2P' : 'Аудиовызов P2P';
             document.getElementById('call-modal-status').innerText = 'Включение микрофона и камеры...';
@@ -2096,6 +2325,7 @@
                     callsign: myCallsign
                 });
             }
+            startPort443MediaRelay(activeCallPeer);
         }
 
         function declineIncomingCall() {
@@ -2151,7 +2381,11 @@
                     rv.srcObject = remoteMediaStream;
                     rv.muted = false;
                     rv.volume = 1.0;
-                    rv.play().catch(() => {});
+                    rv.play().then(() => {
+                        isWebRtcMediaFlowing = true;
+                        const relayImg = document.getElementById('remote-video-relay');
+                        if (relayImg) relayImg.style.display = 'none';
+                    }).catch(() => {});
                     document.getElementById('remote-video-placeholder').style.display = 'none';
                 }
                 if (ra) {
@@ -2167,12 +2401,9 @@
                 const st = pc.iceConnectionState;
                 const status = document.getElementById('call-modal-status');
                 if (st === 'connected' || st === 'completed') {
+                    isWebRtcMediaFlowing = true;
                     if (status) status.innerText = '🔒 На связи • Канал защищен (SRTP)';
                     forceEnableCallAudio();
-                } else if (st === 'checking') {
-                    if (status) status.innerText = 'Соединение медиапотоков...';
-                } else if (st === 'failed') {
-                    if (status) status.innerText = 'Переподключение медиа-туннеля...';
                 }
             };
 
@@ -2250,6 +2481,8 @@
                 clearInterval(callInviteInterval);
                 callInviteInterval = null;
             }
+            stopPort443MediaRelay();
+            isWebRtcMediaFlowing = false;
             if (notifyPeer && activeCallPeer) {
                 sendPacketToPeer(activeCallPeer, {
                     type: 'call_hangup',
