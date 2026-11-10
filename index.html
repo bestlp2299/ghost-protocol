@@ -295,7 +295,7 @@
                 <div style="display: flex; gap: 14px; overflow-x: auto; align-items: center;" class="no-scrollbar" id="stories-strip">
                     <div onclick="openStoryModal()" style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer;">
                         <div style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, var(--accent), #27272a); display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 100%; height: 100%; background: #050505; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 100%; height: 100%; background: #050505; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--accent);">
                                 <i data-lucide="plus" style="width: 22px; height: 22px; color: var(--accent);"></i>
                             </div>
                         </div>
@@ -374,7 +374,6 @@
                 </button>
             </div>
 
-            <!-- Карточка вашего сетевого кода и позывного -->
             <div class="gp-card" style="background: linear-gradient(135deg, var(--accent-bg), #060606); display: flex; flex-direction: column; gap: 12px;">
                 <div style="font-size: 10px; color: #a1a1aa; font-family: monospace; text-transform: uppercase;">ВАШ СЕТЕВОЙ КОД (СКАЖИТЕ ДРУГУ):</div>
                 <div style="display: flex; align-items: center; justify-content: space-between; background: #000; border: 1px solid var(--accent-border); padding: 10px 14px; border-radius: 12px;">
@@ -459,7 +458,7 @@
             <div class="gp-card" style="display: flex; flex-direction: column; gap: 8px;">
                 <div style="font-weight: bold; font-size: 12px; color: #34d399; font-family: monospace; text-transform: uppercase;">Мульти-Мост Порт-443 (WSS + HTTPS)</div>
                 <div style="font-size: 12px; color: #a1a1aa; line-height: 1.5;">
-                    Исправлен бинарный кодировщик пакетов MQTT и добавлен прямой P2P-мост для мгновенной пересылки видео-кружков, файлов и голосовых/видеозвонков.
+                    Встроенное авто-сжатие медиафайлов и гибридный ретранслятор голоса/видео через Порт-443 (работает даже через VPN + 4G).
                 </div>
             </div>
         </div>
@@ -542,12 +541,12 @@
     <!-- Скрытый выбор файла -->
     <input type="file" id="hidden-file-input" accept="video/*,image/*,audio/*" style="display:none;" onchange="handleFileSelected(event)">
 
-    <!-- МОДАЛКА ЗАПИСИ КРУЖКА (КАК В TELEGRAM) -->
+    <!-- МОДАЛКА ЗАПИСИ КРУЖКА -->
     <div id="video-note-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="align-items: center; max-width: 320px;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="rec-dot"></div>
-                <span id="vnote-timer" style="font-family: monospace; font-size: 14px; font-weight: bold; color: #f4f4f5;">00:00 / 00:10</span>
+                <span id="vnote-timer" style="font-family: monospace; font-size: 14px; font-weight: bold; color: #f4f4f5;">00:00 / 00:07</span>
             </div>
             <div style="width: 220px; height: 220px; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-shadow: 0 0 30px var(--accent-glow); background: #000; position: relative;">
                 <video id="vnote-preview" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
@@ -594,7 +593,7 @@
         <div class="modal-box">
             <h3 style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Подключиться к другу</h3>
             <p style="font-size: 11px; color: #a1a1aa; font-family: monospace;">Введите 4 цифры кода друга (он указан у него в самой верхней строке экрана):</p>
-            <input type="text" id="friend-peer-id-input" placeholder="Например: 4331" class="gp-input" style="text-align: center;">
+            <input type="text" id="friend-peer-id-input" placeholder="Например: 1723" class="gp-input" style="text-align: center;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="connectToFriendSubmit()" class="gp-button" style="flex: 1;">Подключить</button>
                 <button onclick="closeConnectFriendModal()" class="gp-button-outline" style="flex: 1; color: #a1a1aa; border-color: #27272a; background: #18181b;">Отмена</button>
@@ -649,7 +648,8 @@
             </div>
         </div>
     </div>
-        <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
+
+    <!-- МОДАЛКА 7: АКТИВНЫЙ АУДИО / ВИДЕОЗВОНОК -->
     <div id="call-modal" class="modal-overlay hidden-view">
         <div class="modal-box" style="max-width: 360px;">
             <h3 id="call-modal-title" style="font-weight: bold; font-size: 15px; color: #f4f4f5; font-family: monospace; text-transform: uppercase;">Защищенный вызов</h3>
@@ -688,7 +688,10 @@
     </div>
 
     <script>
-        lucide.createIcons();
+        function safeIcons() {
+            try { if (window.lucide) lucide.createIcons(); } catch (e) {}
+        }
+        safeIcons();
 
         // 1. ИДЕНТИФИКАЦИЯ УЗЛА
         let savedPin = localStorage.getItem('gp_pin_code');
@@ -711,7 +714,6 @@
         let currentPeerTarget = null;
         let lastToastPeer = null;
 
-        // Кэш сконвертированных Blob URL для мгновенного проигрывания кружков и видео на iOS/Android
         const mediaBlobUrlCache = {};
 
         let knownPeers = JSON.parse(localStorage.getItem('gp_known_peers') || '{}');
@@ -739,7 +741,6 @@
             } catch (e) {}
         }
 
-        // Конвертация DataURL (Base64) в быстрый Blob URL (решает проблему черного кружка на iOS Safari и Android)
         function getPlayableMediaUrl(msgId, dataUrl) {
             if (!dataUrl) return '';
             if (!dataUrl.startsWith('data:')) return dataUrl;
@@ -763,7 +764,7 @@
             }
         }
 
-        // WebRTC переменные
+        // WebRTC и ретранслятор переменные
         let rtcPeerConnection = null;
         let localStream = null;
         let remoteMediaStream = null;
@@ -789,7 +790,6 @@
         let vnoteTimerInterval = null;
         let vnoteSeconds = 0;
 
-        // Расширенный список STUN + TURN серверов для гарантированного соединения между мобильными сетями 4G/LTE
         const rtcConfig = {
             iceCandidatePoolSize: 6,
             iceServers: [
@@ -814,6 +814,7 @@
             setTheme(currentTheme);
             restoreSavedContacts();
             initPort443Network();
+            safeIcons();
         });
 
         function updateIdentityUI() {
@@ -845,7 +846,7 @@
         }
 
         // =========================================================================
-        // 2. ИСПРАВЛЕННЫЙ СЕТЕВОЙ ДВИЖОК ПОРТ-443 (MQTT WSS + NTFY WSS/HTTPS)
+        // 2. СЕТЕВОЙ ДВИЖОК ПОРТ-443 (MQTT WSS + NTFY WSS/HTTPS)
         // =========================================================================
         let ntfySse = null;
         let ntfyWs = null;
@@ -883,7 +884,8 @@
                     if (!buf.parts[pkt.idx]) {
                         buf.parts[pkt.idx] = pkt.data;
                         buf.received++;
-                    if ( buf.received < buf.total ) {
+                    }
+                    if (buf.received < buf.total) {
                         const pct = Math.max(1, Math.round((buf.received / buf.total) * 100));
                         showToast('📥 Прием медиа: ' + pct + '% (' + buf.received + '/' + buf.total + ')');
                     }
@@ -935,7 +937,6 @@
             } catch (e) {}
         }
 
-        // ИСПРАВЛЕННЫЙ БИНАРНЫЙ КОДИРОВЩИК MQTT v3.1.1 (добавляет 2-байтный префикс длины топика)
         function encodeMqttUtf8(str) {
             const bytes = new TextEncoder().encode(str);
             const out = new Uint8Array(2 + bytes.length);
@@ -982,7 +983,7 @@
         }
 
         function buildMqttPublishPacket(topic, payloadStr) {
-            const tBytes = encodeMqttUtf8(topic); // Включает обязательный 2-байтный префикс длины!
+            const tBytes = encodeMqttUtf8(topic);
             const pBytes = new TextEncoder().encode(payloadStr);
             const remLen = encodeMqttVarLen(tBytes.length + pBytes.length);
             const pkt = new Uint8Array(1 + remLen.length + tBytes.length + pBytes.length);
@@ -1021,7 +1022,6 @@
                 ws.onmessage = (evt) => {
                     const bytes = new Uint8Array(evt.data);
                     let offset = 0;
-                    // Поддержка склеенных TCP/WS фреймов (несколько MQTT пакетов в одном событии)
                     while (offset < bytes.length) {
                         const type = (bytes[offset] >> 4) & 0x0f;
                         let pos = offset + 1;
@@ -1098,7 +1098,6 @@
         async function transmitChunkFrame(targetTopic, frameJson, chunkIndex) {
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
             let sentCount = 0;
-            // Отправляем максимум через 2 активных сокета, чтобы не перегружать буфер
             for (let i = 0; i < rawMqttSockets.length; i++) {
                 const ws = rawMqttSockets[i];
                 if (ws && ws.readyState === 1 && ws.isMqttReady && ws.bufferedAmount < 65536) {
@@ -1125,7 +1124,6 @@
             const targetTopic = getInboxTopic(targetPeerId);
             const rawJson = JSON.stringify(packet);
 
-            // Оптимальный размер чанка 7500 байт для MQTT (кружок или фото = всего 5-8 частей!)
             const hasReadyMqtt = rawMqttSockets.some(ws => ws && ws.readyState === 1 && ws.isMqttReady);
             const CHUNK_SIZE = hasReadyMqtt ? 7500 : 2500;
 
@@ -1149,7 +1147,6 @@
                     data: slice
                 });
                 await transmitChunkFrame(targetTopic, chunkFrame, i);
-                // Безопасная пауза 85 мс между частями, чтобы MQTT-брокеры никогда не разрывали соединение
                 await new Promise(r => setTimeout(r, 85));
             }
         }
@@ -1234,7 +1231,6 @@
             }
             else if (data.type === 'call_invite') {
                 registerPeerContactUI(senderId, senderCallsign);
-                // Если мы уже приняли этот звонок и разговариваем, игнорируем запоздавший повтор инвайта
                 if (activeCallPeer === senderId && rtcPeerConnection) {
                     return;
                 }
@@ -1257,7 +1253,7 @@
                     : '📞 Входящий защищенный АУДИОВЫЗОВ';
                 document.getElementById('incoming-call-modal').classList.remove('hidden-view');
                 vibrateDevice([300, 150, 300]);
-                lucide.createIcons();
+                safeIcons();
             }
             else if (data.type === 'call_ringing') {
                 if (callInviteInterval) {
@@ -1280,7 +1276,6 @@
                 }
             }
             else if (data.type === 'call_vframe') {
-                // Прием живого видеокадра по Порту-443 (работает даже через VPN + 4G!)
                 if (activeCallPeer === senderId && !isWebRtcMediaFlowing && data.frame) {
                     const relayImg = document.getElementById('remote-video-relay');
                     const ph = document.getElementById('remote-video-placeholder');
@@ -1294,7 +1289,6 @@
                 }
             }
             else if (data.type === 'call_aframe') {
-                // Прием живого голосового пакета по Порту-443
                 if (activeCallPeer === senderId && !isWebRtcMediaFlowing && data.audio) {
                     playIncomingRelayAudio(data.audio);
                 }
@@ -1378,7 +1372,7 @@
             document.getElementById('view-' + tab).classList.remove('hidden-view');
             const navBtn = document.getElementById('nav-' + tab);
             if (navBtn) navBtn.classList.add('active');
-            lucide.createIcons();
+            safeIcons();
         }
 
         function openEditCallsignModal() {
@@ -1443,8 +1437,8 @@
         }
 
         function registerPeerContactUI(peerId, displayName) {
-            if (!displayName || displayName.startsWith('ghost-')) {
-                displayName = knownPeers[peerId] || peerId;
+            if (!displayName || displayName.startsWith('ghost-') || displayName === 'Loading...') {
+                displayName = (knownPeers[peerId] && knownPeers[peerId] !== 'Loading...') ? knownPeers[peerId] : peerId;
             }
             knownPeers[peerId] = displayName;
             localStorage.setItem('gp_known_peers', JSON.stringify(knownPeers));
@@ -1501,7 +1495,7 @@
                 document.getElementById('active-chat-title').innerText = displayName;
                 document.getElementById('active-chat-status').innerText = 'P2P Канал • Код: ' + peerId;
             }
-            lucide.createIcons();
+            safeIcons();
         }
 
         function copyMyId() {
@@ -1631,7 +1625,7 @@
             }
             renderMessages(chatId);
             document.getElementById('view-active-chat').classList.remove('hidden-view');
-            lucide.createIcons();
+            safeIcons();
         }
 
         function closeChat() {
@@ -1657,7 +1651,6 @@
 
                 const playUrl = m.mediaUrl ? getPlayableMediaUrl(m.id || ('idx_' + idx), m.mediaUrl) : '';
 
-                // 1. Отрисовка видео-кружка как в Telegram
                 if (m.mediaType === 'video_note' && playUrl) {
                     const vidId = 'vnote_play_' + idx;
                     return `
@@ -1674,7 +1667,6 @@
                     `;
                 }
 
-                // 2. Отрисовка обычного видео, фото или аудио в сообщении
                 let mediaHtml = '';
                 if (playUrl) {
                     if (m.mediaType === 'video') {
@@ -1846,10 +1838,9 @@
             vnoteSeconds = 0;
             document.getElementById('vnote-timer').innerText = '00:00 / 00:07';
             document.getElementById('video-note-modal').classList.remove('hidden-view');
-            lucide.createIcons();
+            safeIcons();
 
             const mime = getSupportedVideoMime();
-            // Компактный битрейт (95 кбит/с), чтобы кружок весил ~45-65 КБ и доходил за 1 секунду!
             const options = mime
                 ? { mimeType: mime, videoBitsPerSecond: 75000, audioBitsPerSecond: 22000 }
                 : { videoBitsPerSecond: 75000, audioBitsPerSecond: 22000 };
@@ -1931,7 +1922,6 @@
             document.getElementById('hidden-file-input').click();
         }
 
-        // Автоматическое сжатие больших фотографий с камеры телефона до ~35 КБ для мгновенной пересылки
         function compressImageFile(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -2063,7 +2053,6 @@
             stopPort443MediaRelay();
             initSharedAudioContext();
 
-            // 1. Ретрансляция видеокадров через Порт-443 (если включен видеозвонок)
             if (isCurrentCallVideo && localStream) {
                 const canvas = document.createElement('canvas');
                 canvas.width = 140;
@@ -2086,7 +2075,6 @@
                 }, 280);
             }
 
-            // 2. Ретрансляция живого голоса короткими пакетами через Порт-443
             if (localStream && localStream.getAudioTracks().length > 0) {
                 const startAudioSlice = () => {
                     if (!activeCallPeer || isWebRtcMediaFlowing || !localStream) return;
