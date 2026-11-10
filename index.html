@@ -1032,20 +1032,27 @@
         }, 25000);
 
         // Низкоуровневая отправка одного небольшого JSON-фрейма (< 2.8 КБ)
-        function transmitSingleFrame(targetTopic, frameJson) {
-            fetch('https://ntfy.sh/' + targetTopic, {
-                method: 'POST',
-                body: frameJson
-            }).then(() => {
-                setNetworkOnlineBadge();
-            }).catch(() => {});
+        async function transmitSingleFrame(targetTopic, frameJson) {
+            let httpOk = false;
+            try {
+                const response = await fetch('https://ntfy.sh/' + targetTopic, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                    body: frameJson
+                });
+                httpOk = response.ok;
+                if (httpOk) setNetworkOnlineBadge();
+            } catch (e) {}
 
+            // Публикуем также через доступные MQTT-соединения; не считаем открытый сокет подтверждением доставки.
             const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
+            let mqttSent = false;
             rawMqttSockets.forEach(ws => {
                 if (ws && ws.readyState === 1 && ws.isMqttReady) {
-                    try { ws.send(mqttPkt); } catch (e) {}
+                    try { ws.send(mqttPkt); mqttSent = true; } catch (e) {}
                 }
             });
+            if (!httpOk && !mqttSent) throw new Error('No signaling transport available');
         }
 
         // Отправка пакета другу (с автоматической нарезкой больших кружков/видео/SDP на части)
@@ -1056,7 +1063,7 @@
 
             const CHUNK_SIZE = 2400; // Безопасный размер для ntfy.sh (лимит 4096 байт) и MQTT
             if (rawJson.length <= CHUNK_SIZE) {
-                transmitSingleFrame(targetTopic, rawJson);
+                await transmitSingleFrame(targetTopic, rawJson);
                 return;
             }
 
@@ -1073,7 +1080,7 @@
                     total: totalChunks,
                     data: slice
                 });
-                transmitSingleFrame(targetTopic, chunkFrame);
+                await transmitSingleFrame(targetTopic, chunkFrame);
                 if (i % 3 === 2) {
                     await new Promise(r => setTimeout(r, 65));
                 }
@@ -1615,6 +1622,53 @@
             }
         }
 
+        // Отправка обычного текстового сообщения в активный P2P-чат.
+        // Ранее кнопка и Enter вызывали эту функцию, но самой функции в файле не было.
+        async function handleSendMessageButton() {
+            const input = document.getElementById('chat-input');
+            if (!input) return;
+            const messageText = input.value.trim();
+            if (!messageText) return;
+
+            if (!currentPeerTarget || isAiChat) {
+                showToast('Откройте P2P-чат с пользователем, чтобы отправить сообщение');
+                return;
+            }
+
+            const peerId = currentPeerTarget;
+            const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            const message = {
+                id: messageId,
+                sender: 'me',
+                author: myCallsign,
+                text: messageText,
+                time: getNowTime(),
+                delivered: false
+            };
+
+            if (!chatHistories[peerId]) chatHistories[peerId] = [];
+            chatHistories[peerId].push(message);
+            input.value = '';
+            saveChatHistories();
+            renderMessages(peerId);
+
+            try {
+                await sendPacketToPeer(peerId, {
+                    type: 'chat',
+                    from: myPeerId,
+                    callsign: myCallsign,
+                    text: messageText,
+                    chatMsgId: messageId
+                });
+                showToast('Сообщение отправлено в сеть. Ожидаем подтверждение доставки.');
+            } catch (err) {
+                message.sendError = true;
+                saveChatHistories();
+                renderMessages(peerId);
+                showToast('Не удалось отправить сообщение: проверьте подключение к сети');
+            }
+        }
+
         function sendQuickEmoji(emoji) {
             document.getElementById('chat-input').value = emoji;
             handleSendMessageButton();
@@ -1851,6 +1905,15 @@
         }
 
         async function startCall(withVideo) {
+            if (!currentPeerTarget || isAiChat) {
+                showToast('Для звонка сначала откройте P2P-чат с пользователем');
+                return;
+            }
+            if (activeCallPeer || pendingCallFrom) {
+                showToast('Сначала завершите текущий вызов');
+                return;
+            }
+            pendingIceCandidates = [];
             unlockMediaElementsOnUserGesture();
             isCurrentCallVideo = withVideo;
             isMicMuted = false;
@@ -1961,7 +2024,8 @@
             if (rtcPeerConnection) {
                 try { rtcPeerConnection.close(); } catch (e) {}
             }
-            pendingIceCandidates = [];
+            // Не очищаем очередь ICE здесь: кандидаты могут прийти до того,
+            // как пользователь примет входящий вызов и будет создан RTCPeerConnection.
             remoteMediaStream = new MediaStream();
             const pc = new RTCPeerConnection(rtcConfig);
 
@@ -2114,6 +2178,7 @@
             activeCallPeer = null;
             pendingCallFrom = null;
             pendingRemoteOfferSdp = null;
+            pendingIceCandidates = [];
             if (rtcPeerConnection) {
                 try { rtcPeerConnection.close(); } catch (e) {}
                 rtcPeerConnection = null;
