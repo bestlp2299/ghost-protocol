@@ -1055,6 +1055,26 @@
             if (!httpOk && !mqttSent) throw new Error('No signaling transport available');
         }
 
+        // Передача частей больших файлов: сначала MQTT, чтобы не упираться
+        // в HTTP rate-limit публичного ntfy на десятках/сотнях POST-запросов.
+        async function transmitChunkFrame(targetTopic, frameJson) {
+            const mqttPkt = buildMqttPublishPacket(targetTopic, frameJson);
+            let mqttSent = false;
+            rawMqttSockets.forEach(ws => {
+                if (ws && ws.readyState === 1 && ws.isMqttReady) {
+                    try { ws.send(mqttPkt); mqttSent = true; } catch (e) {}
+                }
+            });
+            if (mqttSent) return;
+            // Резервный путь, если MQTT-соединения недоступны.
+            const response = await fetch('https://ntfy.sh/' + targetTopic, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                body: frameJson
+            });
+            if (!response.ok) throw new Error('Media chunk transport failed: HTTP ' + response.status);
+        }
+
         // Отправка пакета другу (с автоматической нарезкой больших кружков/видео/SDP на части)
         async function sendPacketToPeer(targetPeerId, packet) {
             packet.msgId = packet.msgId || (Date.now() + '_' + Math.random().toString(36).slice(2, 8));
@@ -1080,9 +1100,10 @@
                     total: totalChunks,
                     data: slice
                 });
-                await transmitSingleFrame(targetTopic, chunkFrame);
-                if (i % 3 === 2) {
-                    await new Promise(r => setTimeout(r, 65));
+                await transmitChunkFrame(targetTopic, chunkFrame);
+                // Небольшая пауза снижает риск переполнения очередей WebSocket-брокера.
+                if (i % 4 === 3) {
+                    await new Promise(r => setTimeout(r, 45));
                 }
             }
         }
@@ -1724,9 +1745,11 @@
             }
 
             vnoteRecorder.ondataavailable = (ev) => {
-                if (ev.data && ev.data.size > 0) {
-                    vnoteChunks.push(ev.data);
-                }
+                if (ev.data && ev.data.size > 0) vnoteChunks.push(ev.data);
+            };
+            vnoteRecorder.onerror = () => {
+                showToast('Ошибка записи видео-кружка. Попробуйте другой браузер или разрешите камеру и микрофон.');
+                cancelVideoNote();
             };
 
             vnoteRecorder.start(250);
@@ -1767,14 +1790,19 @@
             document.getElementById('video-note-modal').classList.add('hidden-view');
 
             vnoteRecorder.onstop = () => {
-                const mimeType = vnoteRecorder.mimeType || 'video/mp4';
+                const mimeType = vnoteRecorder.mimeType || (vnoteChunks[0] && vnoteChunks[0].type) || 'video/webm';
                 const blob = new Blob(vnoteChunks, { type: mimeType });
                 stopVnoteHardware();
+                if (!blob.size) {
+                    showToast('Видео-кружок записался пустым. Попробуйте ещё раз.');
+                    return;
+                }
 
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const base64Video = reader.result;
-                    sendMediaMessage('video_note', base64Video, 'video-note.mp4', '');
+                    const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+                    sendMediaMessage('video_note', base64Video, 'video-note.' + ext, '');
                 };
                 reader.readAsDataURL(blob);
             };
@@ -1842,6 +1870,11 @@
                     mediaUrl: mediaUrl,
                     fileName: fileName,
                     chatMsgId: chatMsgId
+                }).then(() => {
+                    showToast('Медиафайл отправлен. Ожидаем получение собеседником.');
+                }).catch((err) => {
+                    showToast('Не удалось передать медиафайл. Проверьте соединение и попробуйте ещё раз.');
+                    console.error('Media transfer failed:', err);
                 });
             }
         }
@@ -1927,6 +1960,11 @@
             document.getElementById('remote-video-placeholder').style.display = withVideo ? 'flex' : 'none';
 
             localStream = await acquireMediaStream(withVideo);
+            if (!localStream || !localStream.getAudioTracks().length) {
+                showToast('Не удалось получить микрофон. Проверьте разрешения Safari/Яндекс Браузера и повторите звонок.');
+                endActiveCall(false);
+                return;
+            }
             if (localStream && withVideo) {
                 const lv = document.getElementById('local-video');
                 lv.srcObject = localStream;
@@ -1988,6 +2026,11 @@
             document.getElementById('remote-video-placeholder').style.display = isCurrentCallVideo ? 'flex' : 'none';
 
             localStream = await acquireMediaStream(isCurrentCallVideo);
+            if (!localStream || !localStream.getAudioTracks().length) {
+                showToast('Не удалось получить микрофон. Вызов не может начаться без аудио.');
+                endActiveCall(false);
+                return;
+            }
             if (localStream && isCurrentCallVideo) {
                 const lv = document.getElementById('local-video');
                 lv.srcObject = localStream;
@@ -2044,36 +2087,53 @@
             };
 
             pc.ontrack = (event) => {
+                // Используем поток из события, если браузер его предоставляет;
+                // иначе собираем stream вручную (важно для Safari/WebKit).
                 if (event.streams && event.streams[0]) {
-                    event.streams[0].getTracks().forEach(t => remoteMediaStream.addTrack(t));
-                } else if (event.track) {
+                    remoteMediaStream = event.streams[0];
+                } else if (event.track && !remoteMediaStream.getTracks().some(t => t.id === event.track.id)) {
                     remoteMediaStream.addTrack(event.track);
                 }
 
                 const rv = document.getElementById('remote-video');
                 const ra = document.getElementById('remote-audio');
+                const hasVideo = remoteMediaStream.getVideoTracks().some(t => t.readyState === 'live');
+                const hasAudio = remoteMediaStream.getAudioTracks().some(t => t.readyState === 'live');
 
-                if (isCurrentCallVideo && rv) {
+                if (isCurrentCallVideo && rv && hasVideo) {
                     rv.srcObject = remoteMediaStream;
-                    rv.muted = false;
-                    rv.volume = 1.0;
-                    rv.play().catch(() => {});
+                    rv.muted = true; // звук выводится только через audio element, без эха/дублирования
+                    rv.playsInline = true;
+                    rv.play().catch(() => {
+                        document.getElementById('call-modal-status').innerText = 'Видео получено. Нажмите на экран, чтобы запустить воспроизведение';
+                    });
                     document.getElementById('remote-video-placeholder').style.display = 'none';
                 }
-                if (ra) {
+                if (ra && hasAudio) {
                     ra.srcObject = remoteMediaStream;
                     ra.muted = false;
                     ra.volume = 1.0;
-                    ra.play().catch(() => {});
+                    ra.play().catch(() => {
+                        document.getElementById('call-modal-status').innerText = 'Звук получен. Нажмите кнопку включения звука';
+                    });
                 }
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Звук и видео активны';
+                if (hasAudio || hasVideo) {
+                    document.getElementById('call-modal-status').innerText = 'Получен медиапоток собеседника';
+                }
             };
 
             pc.oniceconnectionstatechange = () => {
                 const st = pc.iceConnectionState;
+                const status = document.getElementById('call-modal-status');
                 if (st === 'connected' || st === 'completed') {
-                    document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
+                    if (status) status.innerText = 'Соединение установлено • медиапоток подключён';
                     forceEnableCallAudio();
+                } else if (st === 'checking') {
+                    if (status) status.innerText = 'Проверка сетевого соединения…';
+                } else if (st === 'failed') {
+                    if (status) status.innerText = 'Не удалось соединить устройства: TURN-сервер недоступен или сеть блокирует WebRTC';
+                } else if (st === 'disconnected') {
+                    if (status) status.innerText = 'Связь прервалась. Пытаемся восстановить…';
                 }
             };
 
@@ -2135,22 +2195,25 @@
                     callsign: myCallsign,
                     answerSdp: pc.localDescription
                 });
-                sendPacketToPeer(peerId, {
-                    type: 'webrtc_answer',
-                    from: myPeerId,
-                    sdp: pc.localDescription
-                });
                 document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
             } catch (e) {}
         }
 
         async function handleWebRTCAnswer(sdp) {
-            if (!rtcPeerConnection) return;
+            if (!rtcPeerConnection || !sdp) return;
             try {
+                // Повторные ответы могут прийти по нескольким сигнальным каналам.
+                if (rtcPeerConnection.remoteDescription &&
+                    rtcPeerConnection.remoteDescription.type === 'answer') return;
+                if (rtcPeerConnection.signalingState !== 'have-local-offer') return;
                 await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
                 await flushPendingIce();
-                document.getElementById('call-modal-status').innerText = '🔒 На связи • Сквозное шифрование SRTP';
-            } catch (e) {}
+                const status = document.getElementById('call-modal-status');
+                if (status) status.innerText = 'Ответ собеседника принят • соединяем медиапоток…';
+            } catch (e) {
+                const status = document.getElementById('call-modal-status');
+                if (status) status.innerText = 'Ошибка согласования звонка: ' + (e.message || 'WebRTC');
+            }
         }
 
         async function handleWebRTCIce(candidate) {
